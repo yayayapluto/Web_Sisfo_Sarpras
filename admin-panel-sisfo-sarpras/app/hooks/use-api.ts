@@ -4,12 +4,13 @@ import type { ApiResponse } from "~/types/apiResponse";
 import type { AuthHeaders } from "~/types/headers";
 import {toast} from "sonner";
 
-type UseApiOptions<T> = {
+type UseApiOptions= {
     url: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
     data?: any;
     headers?: AuthHeaders;
-    trigger?: boolean; // New trigger parameter
+    trigger?: boolean;
+    showToast?: boolean
 };
 
 type UseApiResult<T> = {
@@ -18,13 +19,13 @@ type UseApiResult<T> = {
     result: T | null;
 };
 
-const useApi = <T,>({ url, method = 'GET', data = null, headers = {}, trigger }: UseApiOptions<T>): UseApiResult<T> => {
+const useApi = <T,>({ url, method = 'GET', data = null, headers = {}, trigger, showToast = true }: UseApiOptions): UseApiResult<T> => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<object | null>(null);
     const [result, setResult] = useState<T | null>(null);
 
     const fetchData = useCallback(async () => {
-        setIsLoading(true); // Set loading state before the request
+        setIsLoading(true);
         try {
             const config: AxiosRequestConfig = {
                 url,
@@ -41,36 +42,33 @@ const useApi = <T,>({ url, method = 'GET', data = null, headers = {}, trigger }:
              * Error on use-api.ts:38
              * POST http://localhost:8000/api/admin/categories 422 (Unprocessable Content)
              */
-            console.log('Response:', response.data);
 
             if (!response.data.success) {
                 const errorMessage = response.data.error;
                 setError(errorMessage);
                 console.log('Error:', errorMessage);
                 throw new Error(response.data.message);
-            } else {
-                toast(response.data.message, {
-                    position: "top-center"
-                })
             }
 
+            if (showToast) toast.info(response.data.message, {
+                position: "top-center"
+            })
 
             setResult(response.data.content);
         } catch (err: any) {
             if (axios.isAxiosError(err)) {
                 const errorResponse = err.response?.data;
                 setError(errorResponse.message);
-                toast(errorResponse.message, {
+                if (showToast) toast.error(errorResponse.message, {
                     position: "top-center"
                 })
                 if (errorResponse.error !== null && typeof errorResponse.error === "object") {
-                    errorResponse.error.map(err  => toast(err, {
-                        position: "top-center"
-                    }))
+                    errorResponse.error.map(err  => {
+                        if (showToast) showToast && toast.error(err, {position: "top-center"})
+                    })
                 }
                 console.log('Axios Error:', errorResponse);
             } else {
-                setError(err);
                 setError(err);
                 console.log('General Error:', err);
             }

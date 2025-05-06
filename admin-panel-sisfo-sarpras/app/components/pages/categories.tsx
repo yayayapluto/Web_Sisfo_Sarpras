@@ -36,8 +36,11 @@ import type {PaginationResponse} from "~/types/paginationResponse";
 import { toast } from "sonner"
 import {CreateCategoryForm} from "~/components/formHandlers/categoryForm";
 import {Skeleton} from "~/components/ui/skeleton";
+import {useCookies} from "~/hooks/use-cookies";
+import {useProtectRoute} from "~/hooks/use-protect-route";
 
 export default function Categories() {
+    useProtectRoute()
     const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
     const [sortBy, setSortBy] = useState<"name" | "created_at">("created_at");
     const [withRel, setWithRel] = useState<string[]>([]);
@@ -61,10 +64,11 @@ export default function Categories() {
         setUrl(newUrl);
     }, [sortBy, sortDir, searchTerm]);
 
+    const [token] = useCookies("auth_token")
     const { isLoading, error, result } = useApi<PaginationResponse<Category>>({
         url: url,
         headers: {
-            Authorization: "Bearer 2|jYR7NbnViNb3pbCruJ2VkOlgfLhvxxYd6T1dU1Gn8713760a"
+            Authorization: `Bearer ${token}`
         },
         trigger: reload
     });

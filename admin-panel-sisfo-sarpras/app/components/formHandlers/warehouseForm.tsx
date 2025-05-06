@@ -16,8 +16,6 @@ import {Input} from "~/components/ui/input";
 import {Textarea} from "~/components/ui/textarea";
 import {cn} from "~/lib/utils";
 import useApi from "~/hooks/use-api";
-import type {PaginationResponse} from "~/types/paginationResponse";
-import type {Category} from "~/types/category";
 import {useEffect, useState} from "react";
 import {Spinner} from "~/components/ui/spinner";
 
@@ -31,32 +29,32 @@ import {
     DialogTrigger,
 } from "~/components/ui/dialog"
 import {useCookies} from "~/hooks/use-cookies";
+import type {Warehouse} from "~/types/warehouse";
 
 
 const formCreateSchema = z.object({
-    name: z.string().nonempty("Name field cant be empty"),
-    description: z.string().optional()
+    name: z.string().nonempty("Name field cant be empty").min(3, "Name length minimum is 3"),
+    location: z.string().nonempty(("Location field cant be empty")),
+    capacity: z.number().min(1, "Capacity minimum is 1")
 })
 
 const formUpdateSchema = z.object({
-    name: z.string().optional(),
-    description: z.string().optional()
+    name: z.string().nonempty("Name field cant be empty").min(3, "Name length minimum is 3").optional(),
+    location: z.string().nonempty(("Location field cant be empty")).optional(),
+    capacity: z.number().min(1, "Capacity minimum is 1").optional()
 })
 
-export function CreateCategoryForm() {
+export function CreateWarehouseForm() {
     const form = useForm<z.infer<typeof formCreateSchema>>({
         resolver: zodResolver(formCreateSchema),
-        defaultValues: {
-            description: ""
-        }
     })
 
     const [data, setData] = useState<z.infer<typeof formCreateSchema> | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const [token] = useCookies("auth_token")
-    const url = "http://localhost:8000/api/admin/categories"
-    const { isLoading, error, result } = useApi<Category>({
+    const url = "http://localhost:8000/api/admin/warehouses"
+    const { isLoading, error, result } = useApi<Warehouse>({
         url: url,
         headers: {
             Authorization: "Bearer " + token
@@ -94,12 +92,25 @@ export function CreateCategoryForm() {
                 />
                 <FormField
                     control={form.control}
-                    name={"description"}
-                    render={({field}) => (
+                    name="location"
+                    render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel>Location</FormLabel>
                             <FormControl>
-                                <Textarea className={cn("resize-none h-32")} {...field} />
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="capacity"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Capacity</FormLabel>
+                            <FormControl>
+                                <Input type={"number"} min={1} max={1000} {...field} onChange={(e) => field.onChange(+e.target.value)} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -116,16 +127,14 @@ export function CreateCategoryForm() {
     )
 }
 
-type UpdateCategoryFormProps = {
-    slug: string;
+type UpdateWarehouseFormProps = {
+    warehouse: Warehouse
     onEdit: boolean;
 }
-export function UpdateCategoryForm({slug, onEdit = false}: UpdateCategoryFormProps) {
+
+export function UpdateWarehouseForm({warehouse, onEdit = false}: UpdateWarehouseFormProps) {
     const form = useForm<z.infer<typeof formUpdateSchema>>({
         resolver: zodResolver(formUpdateSchema),
-        defaultValues: {
-            description: ""
-        }
     })
 
     const [data, setData] = useState<z.infer<typeof formUpdateSchema> | null>(null)
@@ -133,10 +142,10 @@ export function UpdateCategoryForm({slug, onEdit = false}: UpdateCategoryFormPro
 
     const [isDelete, setIsDelete] = useState(false)
 
-    const url = `http://localhost:8000/api/admin/categories/${slug}`
+    const url = `http://localhost:8000/api/admin/warehouses/${warehouse.id}`
 
     const [token] = useCookies("auth_token")
-    const { isLoading: isFetching, error: fetchError, result: fetchData } = useApi<Category>({
+    const { isLoading: isFetching, error: fetchError, result: fetchData } = useApi<Warehouse>({
         url: url,
         headers: {
             Authorization: "Bearer " + token
@@ -145,7 +154,7 @@ export function UpdateCategoryForm({slug, onEdit = false}: UpdateCategoryFormPro
         trigger: true
     });
 
-    const { isLoading: isDeleting, error: deleteError } = useApi<Category>({
+    const { isLoading: isDeleting, error: deleteError } = useApi<Warehouse>({
         url: url,
         headers: {
             Authorization: "Bearer " + token
@@ -157,13 +166,14 @@ export function UpdateCategoryForm({slug, onEdit = false}: UpdateCategoryFormPro
     useEffect(() => {
         if (fetchData) {
             form.reset({
-                name: fetchData.name,
-                description: fetchData.description || ""
+                name: warehouse.name,
+                location: warehouse.location,
+                capacity: warehouse.capacity
             })
         }
     }, [fetchData, form])
 
-    const { isLoading, error, result } = useApi<Category>({
+    const { isLoading, error, result } = useApi<Warehouse>({
         url: url,
         headers: {
             Authorization: "Bearer " + token
@@ -186,8 +196,9 @@ export function UpdateCategoryForm({slug, onEdit = false}: UpdateCategoryFormPro
     const handleRevertBtn = () => {
         if (fetchData) {
             form.reset({
-                name: fetchData.name,
-                description: fetchData.description || ""
+                name: warehouse.name,
+                location: warehouse.location,
+                capacity: warehouse.capacity
             })
         }
     }
@@ -198,12 +209,11 @@ export function UpdateCategoryForm({slug, onEdit = false}: UpdateCategoryFormPro
                 <FormField
                     control={form.control}
                     name="name"
-                    disabled={!onEdit}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                                <Input {...field} />
+                                <Input {...field} disabled={isFetching || !onEdit}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -211,13 +221,25 @@ export function UpdateCategoryForm({slug, onEdit = false}: UpdateCategoryFormPro
                 />
                 <FormField
                     control={form.control}
-                    disabled={!onEdit}
-                    name={"description"}
-                    render={({field}) => (
+                    name="location"
+                    render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel>Location</FormLabel>
                             <FormControl>
-                                <Textarea className={cn("resize-none h-32")} {...field} />
+                                <Input {...field} disabled={isFetching || !onEdit}/>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="capacity"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Capacity</FormLabel>
+                            <FormControl>
+                                <Input disabled={isFetching || !onEdit} type={"number"} min={1} max={1000} {...field} onChange={(e) => field.onChange(+e.target.value)} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -228,17 +250,17 @@ export function UpdateCategoryForm({slug, onEdit = false}: UpdateCategoryFormPro
                 </FormDescription>
                 {onEdit ? (
                     <div className="flex justify-end gap-2">
-                        <Button variant={"outline"} onClick={handleRevertBtn} type={"button"} disabled={fetchData?.slug === ""}>
+                        <Button variant={"outline"} onClick={handleRevertBtn} type={"button"} disabled={typeof fetchData?.id === "undefined"}>
                             Revert
                         </Button>
-                        <Button type="submit" className={cn("bg-tb hover:bg-tb-sec")} disabled={fetchData?.slug === ""} >
+                        <Button type="submit" className={cn("bg-tb hover:bg-tb-sec")} disabled={typeof fetchData?.id === "undefined"} >
                             {isLoading ? <Spinner text={"Saving..."} isWhite/> : "Save changes"}
                         </Button>
                     </div>
                 ) : (
                     <Dialog>
                         <DialogTrigger>
-                            <Button variant={"outline"} type={"button"} className={cn("w-full")} disabled={isFetching || isDeleting || fetchData?.slug === ""}>
+                            <Button variant={"outline"} type={"button"} className={cn("w-full")} disabled={isFetching || isDeleting || typeof fetchData?.id === "undefined"}>
                                 Delete
                             </Button>
                         </DialogTrigger>

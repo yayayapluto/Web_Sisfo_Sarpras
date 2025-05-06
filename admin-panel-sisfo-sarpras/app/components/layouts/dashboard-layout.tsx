@@ -1,14 +1,17 @@
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar"
 import { AppSidebar } from "~/components/app-sidebar"
 import {cn} from "~/lib/utils";
-import {Outlet} from "react-router";
-import {useEffect} from "react";
+import {Outlet, useNavigate} from "react-router";
+import {useEffect, useState} from "react";
 import {Separator} from "~/components/ui/separator";
+import {useCookies} from "~/hooks/use-cookies";
+import useApi from "~/hooks/use-api";
+import type {User} from "~/types/user";
+import {toast} from "sonner";
 
 export default function DashboardLayout() {
-    useEffect(() => {
-        console.log("rendered")
-    }, [])
+
+
     return (
         <SidebarProvider>
             <AppSidebar />

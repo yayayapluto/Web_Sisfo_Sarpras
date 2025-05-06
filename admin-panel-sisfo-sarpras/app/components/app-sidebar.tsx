@@ -59,6 +59,7 @@ import {makeDash} from "~/utils/string-formatter";
 import {Textarea} from "~/components/ui/textarea";
 import {Spinner} from "~/components/ui/spinner";
 import {useState} from "react";
+import {useCookies} from "~/hooks/use-cookies";
 
 const adminMenuItems = [
     {
@@ -136,16 +137,16 @@ const adminMenuItems = [
 
 export function AppSidebar() {
     const navigate = useNavigate()
-    const [isLoading, setIsLoading] = useState(false)
-    const simulateLoading = () => {
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-            navigate("/", {
-                viewTransition: true
-            });
-        }, Math.floor(Math.random() * 1000 + 1000));
-    };
+    const [getCookie, setCookie, removeCookie] = useCookies("auth_token")
+
+    const logoutBtnHandler = () => {
+        removeCookie()
+        navigate("/", {
+            replace: true,
+            viewTransition: true
+        })
+    }
+
     return (
         <Sidebar>
             <SidebarHeader>
@@ -240,8 +241,8 @@ export function AppSidebar() {
                                             </DialogHeader>
                                             <DialogFooter>
                                                 <>
-                                                    <Button variant={"outline"} onClick={simulateLoading}>
-                                                        {isLoading ? <Spinner text={"Logging out..."}/> : "Yes, log out"}
+                                                    <Button variant={"outline"} onClick={logoutBtnHandler}>
+                                                        Yes, log out
                                                     </Button>
                                                     <Button className={cn("bg-tb hover:bg-tb-sec")}>
                                                         No, i'll stay
