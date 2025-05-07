@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
-import axios, { type AxiosRequestConfig, type AxiosResponse, AxiosError } from 'axios';
-import type { ApiResponse } from "~/types/apiResponse";
-import type { AuthHeaders } from "~/types/headers";
+import { useState, useEffect, useCallback, type JSXElementConstructor, type ReactElement, type ReactNode, type ReactPortal} from 'react';
+import axios, {type AxiosRequestConfig, type AxiosResponse, AxiosError} from 'axios';
+import type {ApiResponse} from "~/types/apiResponse";
+import type {AuthHeaders} from "~/types/headers";
 import {toast} from "sonner";
 
-type UseApiOptions= {
+type UseApiOptions = {
     url: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
     data?: any;
@@ -19,10 +19,17 @@ type UseApiResult<T> = {
     result: T | null;
 };
 
-const useApi = <T,>({ url, method = 'GET', data = null, headers = {}, trigger, showToast = true }: UseApiOptions): UseApiResult<T> => {
+const useApi = <T, >({
+                         url,
+                         method = 'GET',
+                         data = null,
+                         headers = {},
+                         trigger,
+                         showToast = true
+                     }: UseApiOptions): { isLoading: boolean; error: object | null; result: T | null | undefined } => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<object | null>(null);
-    const [result, setResult] = useState<T | null>(null);
+    const [result, setResult] = useState<T | null | undefined>(null);
 
     const fetchData = useCallback(async () => {
         setIsLoading(true);
@@ -37,24 +44,30 @@ const useApi = <T,>({ url, method = 'GET', data = null, headers = {}, trigger, s
                 data: data ? data : undefined,
             };
 
+            if (data instanceof FormData) {
+                delete config.headers!['Content-Type'];
+            } else {
+                config.headers!['Content-Type'] = 'application/json';
+            }
+
             const response: AxiosResponse<ApiResponse<T>> = await axios(config);
-            /**
-             * Error on use-api.ts:38
-             * POST http://localhost:8000/api/admin/categories 422 (Unprocessable Content)
-             */
 
             if (!response.data.success) {
                 const errorMessage = response.data.error;
                 setError(errorMessage);
                 console.log('Error:', errorMessage);
                 throw new Error(response.data.message);
+            } else {
+                console.log(response.data.content)
             }
+
 
             if (showToast) toast.info(response.data.message, {
                 position: "top-center"
             })
 
             setResult(response.data.content);
+
         } catch (err: any) {
             if (axios.isAxiosError(err)) {
                 const errorResponse = err.response?.data;
@@ -63,7 +76,7 @@ const useApi = <T,>({ url, method = 'GET', data = null, headers = {}, trigger, s
                     position: "top-center"
                 })
                 if (errorResponse.error !== null && typeof errorResponse.error === "object") {
-                    errorResponse.error.map(err  => {
+                    errorResponse.error.map((err: any | (() => React.ReactNode) | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined)  => {
                         if (showToast) showToast && toast.error(err, {position: "top-center"})
                     })
                 }

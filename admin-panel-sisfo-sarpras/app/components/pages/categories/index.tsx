@@ -1,5 +1,4 @@
 import React, {type ChangeEvent, useEffect, useState} from "react";
-import { Button } from "../ui/button";
 import {ArrowDownIcon, ArrowLeft, ArrowRight, ArrowUpIcon, Plus, RefreshCcw} from "lucide-react";
 import { cn } from "~/lib/utils";
 import { DataTable } from "~/components/ui/data-table";
@@ -16,34 +15,41 @@ import {
     DropdownMenuRadioGroup,
     DropdownMenuSeparator
 } from "@radix-ui/react-dropdown-menu";
-import {capitalize, makeDash} from "~/utils/string-formatter";
-
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "~/components/ui/dialog"
+import {capitalize} from "~/utils/string-formatter";
 import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
-import {Textarea} from "~/components/ui/textarea";
 import {Spinner} from "~/components/ui/spinner";
 import useApi from "~/hooks/use-api";
 import type {PaginationResponse} from "~/types/paginationResponse";
 import { toast } from "sonner"
-import {CreateCategoryForm} from "~/components/formHandlers/categoryForms/createCategoryForm";
 import {Skeleton} from "~/components/ui/skeleton";
 import {useCookies} from "~/hooks/use-cookies";
 import {useProtectRoute} from "~/hooks/use-protect-route";
+import {Button} from "~/components/ui/button";
 
-export default function Categories() {
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "~/components/ui/breadcrumb"
+import {useNavigate} from "react-router";
+
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "~/components/ui/hover-card"
+import {Label} from "~/components/ui/label";
+
+
+
+
+export default function CategoryIndex() {
     useProtectRoute()
     const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
     const [sortBy, setSortBy] = useState<"name" | "created_at">("created_at");
-    const [withRel, setWithRel] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
     const [url, setUrl] = useState("http://localhost:8000/api/admin/categories")
@@ -62,7 +68,10 @@ export default function Categories() {
     useEffect(() => {
         const newUrl = `http://localhost:8000/api/admin/categories?search=${searchTerm}&sortBy=${sortBy}&sortDir=${sortDir}`;
         setUrl(newUrl);
+        setReload(true)
     }, [sortBy, sortDir, searchTerm]);
+
+    const navigate = useNavigate()
 
     const [token] = useCookies("auth_token")
     const { isLoading, error, result } = useApi<PaginationResponse<Category>>({
@@ -79,17 +88,25 @@ export default function Categories() {
 
     const toggleSortDirection = () => {
         setSortDir(prevDir => (prevDir === "asc" ? "desc" : "asc"));
-        setReload(true)
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-        setReload(true)
     };
 
     return (
-        <div className="container mx-auto">
-            <h1 className="text-3xl">Categories</h1>
+        <div className="container mx-auto py-4">
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>Categories</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
             <div className="flex flex-col py-8 justify-between gap-5">
                 <div className={"flex flex-col lg:flex-row gap-5"}>
                     <Input
@@ -110,7 +127,6 @@ export default function Categories() {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuRadioGroup value={sortBy} onValueChange={value => {
                                     setSortBy(value as "name" | "created_at")
-                                    setReload(true)
                                 }}>
                                     <DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
                                     <DropdownMenuRadioItem value="created_at">Created at</DropdownMenuRadioItem>
@@ -121,28 +137,6 @@ export default function Categories() {
                             {capitalize(sortDir)}
                             {sortDir === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}
                         </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline">With: {withRel.toString()}</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                                <DropdownMenuLabel>Available relations</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuCheckboxItem
-                                    checked={withRel.includes("items")}
-                                    onCheckedChange={(checked) => {
-                                        if (checked) {
-                                            setWithRel(prev => [...prev, "items"]);
-                                        } else {
-                                            setWithRel(prev => prev.filter(w => w !== "items"));
-                                        }
-                                        setReload(true)
-                                    }}
-                                >
-                                    Items
-                                </DropdownMenuCheckboxItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                     </div>
                 </div>
                 <div className={"flex flex-row gap-2"}>
@@ -151,28 +145,15 @@ export default function Categories() {
                         <RefreshCcw className={`${isLoading && "animate-spin"}`}/>
                     </Button>
 
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button className={cn("bg-tb hover:bg-tb-sec")} disabled={isLoading}>
-                                Add new
-                                <Plus/>
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle>Create new category</DialogTitle>
-                                <DialogDescription>
-                                    Make sure you naming it properly
-                                </DialogDescription>
-                            </DialogHeader>
-                            <CreateCategoryForm/>
-                        </DialogContent>
-                    </Dialog>
+                    <Button className={cn("bg-tb hover:bg-tb-sec")} disabled={isLoading} onClick={() => navigate("/categories/create")}>
+                        Add new
+                        <Plus/>
+                    </Button>
                 </div>
             </div>
 
             {isLoading && (
-                <Skeleton className={"w-full h-[571.5px] flex justify-center items-center"}>
+                <Skeleton className={"w-full h-32 flex justify-center items-center"}>
                     <Spinner/>
                 </Skeleton>
             )}
@@ -185,7 +166,6 @@ export default function Categories() {
                     disabled={result?.prev_page_url === null || isLoading}
                     onClick={() => {
                         setUrl(result?.prev_page_url!)
-                        setReload(true)
                     }}
                 >
                     <ArrowLeft/>
@@ -197,7 +177,6 @@ export default function Categories() {
                     disabled={result?.next_page_url === null || isLoading}
                     onClick={() => {
                         setUrl(result?.next_page_url!)
-                        setReload(true)
                     }}
                 >
                     Next

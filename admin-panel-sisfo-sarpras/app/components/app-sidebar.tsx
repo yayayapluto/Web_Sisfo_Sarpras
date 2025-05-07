@@ -68,17 +68,17 @@ const adminMenuItems = [
         items: [
             {
                 title: "Users",
-                url: "/dashboard/users",
+                url: "/users",
                 icon: User,
             },
             {
                 title: "Categories",
-                url: "/dashboard/categories",
+                url: "/categories",
                 icon: List,
             },
             {
                 title: "Warehouses",
-                url: "/dashboard/warehouses",
+                url: "/warehouses",
                 icon: Box,
             },
         ],
@@ -89,7 +89,7 @@ const adminMenuItems = [
         items: [
             {
                 title: "List Items",
-                url: "/dashboard/items",
+                url: "/items",
                 icon: Archive,
             },
         ],
@@ -100,7 +100,7 @@ const adminMenuItems = [
         items: [
             {
                 title: "List Item Units",
-                url: "/dashboard/item-units",
+                url: "/item-units",
                 icon: List,
             },
         ],
@@ -111,12 +111,12 @@ const adminMenuItems = [
         items: [
             {
                 title: "Borrow Requests",
-                url: "/dashboard/borrow-requests",
+                url: "/borrow-requests",
                 icon: PlusCircle,
             },
             {
                 title: "Return Requests",
-                url: "/dashboard/return-requests",
+                url: "/return-requests",
                 icon: Calendar,
             },
         ],
@@ -127,7 +127,7 @@ const adminMenuItems = [
         items: [
             {
                 title: "Logs",
-                url: "/dashboard/log-activities",
+                url: "/log-activities",
                 icon: Search,
             },
         ],
@@ -140,6 +140,7 @@ export function AppSidebar() {
     const [getCookie, setCookie, removeCookie] = useCookies("auth_token")
 
     const logoutBtnHandler = () => {
+        console.log("Cookie will be removed: ", getCookie)
         removeCookie()
         navigate("/", {
             replace: true,
