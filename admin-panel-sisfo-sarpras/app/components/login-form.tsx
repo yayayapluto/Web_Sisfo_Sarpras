@@ -25,7 +25,7 @@ export function LoginForm({
         <CardHeader>
           <CardTitle>
             <div className={"flex justify-center"}>
-              <img src={"https://portal.smktarunabhakti.net/pluginfile.php/1/core_admin/logo/0x150/1745293129/download.jpg"} alt={"Logo SMK Taruna Bhakti"}/>
+              <img src={"~/../logo_tb.webp"} alt={"Logo SMK Taruna Bhakti"}/>
             </div>
             Sisfo Sarpras
           </CardTitle>

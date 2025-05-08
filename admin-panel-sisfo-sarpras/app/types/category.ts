@@ -4,6 +4,6 @@ import type {Item} from "~/types/item";
 export type Category = {
     slug: string,
     name: string,
-    description: string | null,
+    description?: string,
     items?: Item[]
 } & Mandatory

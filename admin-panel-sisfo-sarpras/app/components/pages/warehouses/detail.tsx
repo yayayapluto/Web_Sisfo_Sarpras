@@ -1,6 +1,5 @@
 import {useNavigate, useParams} from "react-router";
 import useApi from "~/hooks/use-api";
-import type {Category} from "~/types/category";
 import {useCookies} from "~/hooks/use-cookies";
 import React, {useEffect, useState} from "react";
 import {Separator} from "~/components/ui/separator";
@@ -28,22 +27,24 @@ import {
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import {cn} from "~/lib/utils";
+import type {Warehouse} from "~/types/warehouse";
+import {itemUnitColumn} from "~/components/columns/itemUnitColumn";
 import {Badge} from "~/components/ui/badge";
 
 
-export default function CategoryDetail() {
+export default function WarehouseDetail() {
     const params = useParams()
     const navigate = useNavigate()
 
-    const slug = params.slug
+    const id = params.id
     const [token] = useCookies("auth_token")
 
-    const [category, setCategory] = useState<Category | undefined>()
+    const [warehouse, setWarehouse] = useState<Warehouse | undefined>()
     const [refetch, setRefetch] = useState(true)
 
     const baseUrl = import.meta.env.VITE_BASE_URL
-    const url = `${baseUrl}/api/admin/categories/${params.slug}`
-    const {isLoading, error, result} = useApi<Category>({
+    const url = `${baseUrl}/api/admin/warehouses/${params.id}`
+    const {isLoading, error, result} = useApi<Warehouse>({
         url: url,
         headers: {
             Authorization: `Bearer ${token}`
@@ -57,12 +58,12 @@ export default function CategoryDetail() {
 
     useEffect(() => {
         if (!isLoading && error === null && result !== null) {
-            setCategory(result)
+            setWarehouse(result)
         }
     }, [isLoading, error, result])
 
     const [isDeleting, setIsDeleting] = useState(false)
-    const {isLoading: isDeleteLoading} = useApi<Category>({
+    const {isLoading: isDeleteLoading} = useApi<Warehouse>({
         url: url,
         method: "DELETE",
         headers: {
@@ -73,7 +74,7 @@ export default function CategoryDetail() {
     useEffect(() => {
         if (isDeleting) {
             setIsDeleting(false)
-            if (!isDeleteLoading) navigate("/categories")
+            if (!isDeleteLoading) navigate("/warehouses")
         }
     }, [isDeleting])
 
@@ -86,11 +87,11 @@ export default function CategoryDetail() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/categories">Categories</BreadcrumbLink>
+                        <BreadcrumbLink href="/warehouses">Warehouse</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>{isLoading ? <Spinner/> : category?.name}</BreadcrumbPage>
+                        <BreadcrumbPage>{isLoading ? <Spinner/> : warehouse?.name}</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
@@ -100,37 +101,39 @@ export default function CategoryDetail() {
                     <>
                         <div className="space-y-4">
                             <h4 className="text-lg font-medium leading-none flex flex-col">
-                                <p>{category?.name}</p>
-                                <span className="text-sm text-muted-foreground">
-                                     ({category?.slug})
-                                </span>
+                                <p>{warehouse?.name}</p>
                             </h4>
-                            <p className="text-sm text-muted-foreground">
-                                {category?.description}
-                            </p>
+                            <div className="text-sm text-muted-foreground space-y-2">
+                                <p>
+                                    Location: {warehouse?.location}
+                                </p>
+                                <p>
+                                    Maximum Capacity: {warehouse?.capacity}
+                                </p>
+                            </div>
                         </div>
                         <Separator className="my-4" />
                         <div className="flex items-center space-x-4">
-                            <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${category?.created_at}`}</p>
+                            <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${warehouse?.created_at}`}</p>
                             <Separator orientation="vertical" />
-                            <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${category?.updated_at}`}</p>
+                            <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${warehouse?.updated_at}`}</p>
                         </div>
                         <Separator className="my-4" />
                         <div className="flex flex-col gap-2">
-                            <Button variant={"outline"} onClick={() => navigate(`/categories/${slug}/edit`)}>
-                                Edit this category
+                            <Button variant={"outline"} onClick={() => navigate(`/warehouses/${id}/edit`)}>
+                                Edit this warehouse
                             </Button>
                             <AlertDialog>
                                 <AlertDialogTrigger>
                                     <Button variant={"outline"} className={cn("w-full")}>
-                                        Delete this category
+                                        Delete this warehouse
                                     </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure want to delete this category?</AlertDialogTitle>
+                                        <AlertDialogTitle>Are you sure want to delete this warehouse?</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This action cannot be undone. You will need to create this category again
+                                            This action cannot be undone. You will need to create this warehouse again
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
@@ -149,10 +152,10 @@ export default function CategoryDetail() {
                 {!isLoading && (
                     <>
                         <h4 className={"text-lg font-normal"}>
-                            List item units in this category
-                            <Badge className={cn("px-4 ml-2")}>{category?.items?.length ?? 0}</Badge>
+                            List item units in this warehouse
+                            <Badge className={cn("px-4 ml-2")}>{warehouse?.item_units?.length ?? 0}</Badge>
                         </h4>
-                        {category?.items && <DataTable columns={ItemColumn} data={category?.items}/>}
+                        {warehouse?.item_units && <DataTable columns={itemUnitColumn} data={warehouse?.item_units}/>}
                     </>
                 )}
             </div>

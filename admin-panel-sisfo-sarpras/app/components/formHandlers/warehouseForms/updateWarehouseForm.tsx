@@ -1,6 +1,5 @@
-import type {Category} from "~/types/category";
 import {useForm} from "react-hook-form";
-import {z} from "zod";
+import {string, z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useState} from "react";
 import {useCookies} from "~/hooks/use-cookies";
@@ -12,43 +11,43 @@ import {Textarea} from "~/components/ui/textarea";
 import {cn} from "~/lib/utils";
 import {Button} from "~/components/ui/button";
 import {Spinner} from "~/components/ui/spinner";
+import type {Warehouse} from "~/types/warehouse";
 
 const formUpdateSchema = z.object({
-    name: z.string().optional(),
-    description: z.string().optional()
+    name: z.string().nonempty("Name field cant be empty").optional(),
+    location: z.string().nonempty("Location field cannot be empty").optional(),
+    capacity: z.string().optional()
 })
 
-type UpdateCategoryFormProps = {
-    category: Category;
+type UpdateWarehouseFormProps = {
+    warehouse: Warehouse;
 }
 
-export function UpdateCategoryForm({category}: UpdateCategoryFormProps) {
+export function UpdateWarehouseUpdForm({warehouse}: UpdateWarehouseFormProps) {
     const form = useForm<z.infer<typeof formUpdateSchema>>({
         resolver: zodResolver(formUpdateSchema),
-        defaultValues: {
-            description: ""
-        }
     })
 
-    const [data, setData] = useState<z.infer<typeof formUpdateSchema> | null>(null)
+    const [data, setData] = useState<z.infer<typeof formUpdateSchema> | FormData | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const baseUrl = import.meta.env.VITE_BASE_URL
-    const url = `${baseUrl}/api/admin/categories/${category.slug}`
+    const url = `${baseUrl}/api/admin/warehouses/${warehouse.id}`
     const [token] = useCookies("auth_token")
 
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (category) {
+        if (warehouse) {
             form.reset({
-                name: category.name,
-                description: category.description || ""
+                name: warehouse.name,
+                location: warehouse.location,
+                capacity: String(warehouse.capacity)
             })
         }
-    }, [category, form])
+    }, [warehouse, form])
 
-    const { isLoading, error, result } = useApi<Category>({
+    const { isLoading, error, result } = useApi<Warehouse>({
         url: url,
         headers: {
             Authorization: "Bearer " + token
@@ -63,7 +62,7 @@ export function UpdateCategoryForm({category}: UpdateCategoryFormProps) {
     }, [isSubmitting])
 
     useEffect(() => {
-        if (!isLoading && result) navigate(`/categories/${result.slug}`)
+        if (!isLoading && result) navigate(`/warehouses/${warehouse.id}`)
     }, [result])
 
 
@@ -73,10 +72,11 @@ export function UpdateCategoryForm({category}: UpdateCategoryFormProps) {
     }
 
     const handleRevertBtn = () => {
-        if (category) {
+        if (warehouse) {
             form.reset({
-                name: category.name,
-                description: category.description || ""
+                name: warehouse.name,
+                location: warehouse.location,
+                capacity: String(warehouse.capacity)
             })
         }
     }
@@ -84,7 +84,7 @@ export function UpdateCategoryForm({category}: UpdateCategoryFormProps) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 flex flex-col">
-                <h4 className="text-lg">Edit Category</h4>
+                <h4 className="text-lg">Edit Warehouse</h4>
                 <FormField
                     control={form.control}
                     name="name"
@@ -100,22 +100,35 @@ export function UpdateCategoryForm({category}: UpdateCategoryFormProps) {
                 />
                 <FormField
                     control={form.control}
-                    name={"description"}
+                    name={"location"}
                     render={({field}) => (
                         <FormItem>
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel>Location</FormLabel>
                             <FormControl>
-                                <Textarea className={cn("resize-none h-32")} {...field} />
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name={"capacity"}
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>Capacity</FormLabel>
+                            <FormControl>
+                                <Input type={"number"} min={1} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 <div className="flex justify-end gap-2">
-                    <Button variant={"outline"} onClick={handleRevertBtn} type={"button"} disabled={category?.slug === ""}>
+                    <Button variant={"outline"} onClick={handleRevertBtn} type={"button"} disabled={typeof warehouse?.id !== "number"}>
                         Revert
                     </Button>
-                    <Button type="submit" className={cn("bg-tb hover:bg-tb-sec")} disabled={category?.slug === ""} >
+                    <Button type="submit" className={cn("bg-tb hover:bg-tb-sec")} disabled={typeof warehouse?.id !== "number"} >
                         {isLoading ? <Spinner text={"Saving..."} isWhite/> : "Save changes"}
                     </Button>
                 </div>

@@ -57,17 +57,14 @@ const useApi = <T, >({
                 setError(errorMessage);
                 console.log('Error:', errorMessage);
                 throw new Error(response.data.message);
-            } else {
-                console.log(response.data.content)
             }
-
 
             if (showToast) toast.info(response.data.message, {
                 position: "top-center"
             })
 
             setResult(response.data.content);
-
+            console.log("Response: ", response.data)
         } catch (err: any) {
             if (axios.isAxiosError(err)) {
                 const errorResponse = err.response?.data;

@@ -11,6 +11,8 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import {cn} from "~/lib/utils";
 import {Toaster} from "sonner";
+import {useEffect} from "react";
+import {configDotenv} from "dotenv";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -45,6 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // configDotenv();
   return <Outlet />;
 }
 

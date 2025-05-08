@@ -12,6 +12,8 @@ export type ItemUnit = Mandatory & {
     status: 'available' | 'borrowed' | 'unknown'
     quantity: number
     qr_image_url: string
-    item: Item
-    warehouse: Warehouse
+    item_id: number
+    warehouse_id: number
+    item?: Item
+    warehouse?: Warehouse
 }

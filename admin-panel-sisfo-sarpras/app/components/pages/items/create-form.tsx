@@ -5,8 +5,8 @@ import {
     BreadcrumbList, BreadcrumbPage,
     BreadcrumbSeparator
 } from "~/components/ui/breadcrumb";
-import {CreateCategoryForm} from "~/components/formHandlers/categoryForms/createCategoryForm";
 import React from "react";
+import {CreateItemForm} from "~/components/formHandlers/itemForms/createItemForm";
 
 export default function CreateCategory () {
     return (
@@ -18,7 +18,7 @@ export default function CreateCategory () {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/categories">Categories</BreadcrumbLink>
+                        <BreadcrumbLink href="/items">Items</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -27,7 +27,7 @@ export default function CreateCategory () {
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={"border-1 p-4 space-y-4"}>
-                <CreateCategoryForm/>
+                <CreateItemForm/>
             </div>
         </div>
     )

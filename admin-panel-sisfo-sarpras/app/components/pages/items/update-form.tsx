@@ -1,7 +1,6 @@
 import {useParams} from "react-router";
 import {useCookies} from "~/hooks/use-cookies";
 import React, {useEffect, useState} from "react";
-import type {Category} from "~/types/category";
 import useApi from "~/hooks/use-api";
 import {
     Breadcrumb,
@@ -12,19 +11,20 @@ import {
     BreadcrumbSeparator
 } from "~/components/ui/breadcrumb";
 import {Spinner} from "~/components/ui/spinner";
-import {UpdateCategoryForm} from "~/components/formHandlers/categoryForms/updateCategoryForm";
-export default function CategoryEdit () {
+import type {Item} from "~/types/item";
+import {UpdateItemForm} from "~/components/formHandlers/itemForms/updateItemForm";
+export default function ItemEdit () {
     const params = useParams()
 
-    const slug = params.slug
+    const id = params.id
     const [token] = useCookies("auth_token")
 
-    const [category, setCategory] = useState<Category | undefined>()
+    const [item, setItem] = useState<Item | undefined>()
     const [refetch, setRefetch] = useState(true)
 
     const baseUrl = import.meta.env.VITE_BASE_URL
-    const url = `${baseUrl}/api/admin/categories/${params.slug}`
-    const {isLoading, error, result} = useApi<Category>({
+    const url = `${baseUrl}/api/admin/items/${params.id}`
+    const {isLoading, error, result} = useApi<Item>({
         url: url,
         headers: {
             Authorization: `Bearer ${token}`
@@ -38,7 +38,7 @@ export default function CategoryEdit () {
 
     useEffect(() => {
         if (!isLoading && error === null && result !== null) {
-            setCategory(result)
+            setItem(result)
         }
     }, [isLoading, error, result])
 
@@ -51,11 +51,11 @@ export default function CategoryEdit () {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/categories">Categories</BreadcrumbLink>
+                        <BreadcrumbLink href="/items">Items</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href={`/categories/${slug}`}>{slug}</BreadcrumbLink>
+                        <BreadcrumbLink href={`/items/${id}`}>{result?.name ?? (<Spinner/>)}</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -65,7 +65,7 @@ export default function CategoryEdit () {
             </Breadcrumb>
             <div className={"border-1 p-4 space-y-4"}>
                 {isLoading && <Spinner/>}
-                {!isLoading && category && (<UpdateCategoryForm category={category}/>)}
+                {!isLoading && item && (<UpdateItemForm item={item}/>)}
             </div>
         </div>
     )
