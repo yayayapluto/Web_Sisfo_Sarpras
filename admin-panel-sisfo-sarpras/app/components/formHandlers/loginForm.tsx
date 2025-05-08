@@ -53,7 +53,8 @@ export function LoginFormZ() {
     const [data, setData] = useState<z.infer<typeof formLoginSchema> | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const url = "http://localhost:8000/api/auth/login"
+    const baseUrl = import.meta.env.VITE_BASE_URL
+    const url = `${baseUrl}/api/auth/login`
     const { isLoading, error, result } = useApi<{token: string, role: "admin" | "user"}>({
         url: url,
         method: "POST",
@@ -67,11 +68,13 @@ export function LoginFormZ() {
     }, [isSubmitting])
 
     useEffect(() => {
-        if (result !== null && result.role === "admin") {
-            setAuthInfo(result.token)
-            navigate("/dashboard", { replace: true, viewTransition: true })
-        } else {
-            if (result !== null && result.role !== "admin") toast("Only admin can login", {position: "top-center"})
+        if (typeof result !== "undefined") {
+            if (result !== null && result.role === "admin") {
+                setAuthInfo(result.token)
+                navigate("/dashboard", { replace: true, viewTransition: true })
+            } else {
+                if (result !== null && result.role !== "admin") toast("Only admin can login", {position: "top-center"})
+            }
         }
     }, [result, navigate])
 

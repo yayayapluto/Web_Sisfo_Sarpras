@@ -250,7 +250,7 @@ export function UpdateItemForm({item}: UpdateItemProp) {
                     </div>
                 </div>
                 <Button type="submit" className={cn("bg-tb hover:bg-tb-sec w-full")} >
-                    {isLoading ? <Spinner text={"Submitting..."} isWhite/> : "Submit"}
+                    {isLoading ? <Spinner text={"Saving..."} isWhite/> : "Save Changes"}
                 </Button>
             </form>
         </Form>

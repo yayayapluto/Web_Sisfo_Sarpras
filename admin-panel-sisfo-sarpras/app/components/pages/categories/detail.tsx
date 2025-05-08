@@ -148,10 +148,13 @@ export default function CategoryDetail() {
                 {isLoading && <Spinner/>}
                 {!isLoading && (
                     <>
-                        <h4 className={"text-lg font-normal"}>
-                            List item units in this category
-                            <Badge className={cn("px-4 ml-2")}>{category?.items?.length ?? 0}</Badge>
-                        </h4>
+                        <div className="flex justify-start items-center gap-2">
+                            <h4 className={"text-lg font-normal"}>
+                                List item units in this item
+                            </h4>
+                            <Badge className={cn("px-4")}>{category?.items?.length ?? 0}</Badge>
+                        </div>
+                        <Separator/>
                         {category?.items && <DataTable columns={ItemColumn} data={category?.items}/>}
                     </>
                 )}

@@ -1,6 +1,8 @@
 import type {Mandatory} from "~/types/mandatory";
 import type {Warehouse} from "~/types/warehouse";
 import type {Item} from "~/types/item";
+import type {BorrowDetail} from "~/types/borrowDetail";
+import type {ReturnDetail} from "~/types/returnDetail";
 
 export type ItemUnit = Mandatory & {
     sku: string
@@ -16,4 +18,6 @@ export type ItemUnit = Mandatory & {
     warehouse_id: number
     item?: Item
     warehouse?: Warehouse
+    borrow_details?: BorrowDetail[]
+    return_details?: ReturnDetail[]
 }

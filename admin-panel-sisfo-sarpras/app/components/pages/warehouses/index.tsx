@@ -62,9 +62,13 @@ export default function WarehouseIndex() {
     }, [reload]);
 
     useEffect(() => {
-        const newUrl = `${url}?search=${searchTerm}&sortBy=${sortBy}&sortDir=${sortDir}`;
-        setUrl(newUrl);
         setReload(true)
+    }, [url])
+
+    useEffect(() => {
+        const newUrl = `${baseUrl}/api/admin/warehouses?search=${searchTerm}&sortBy=${sortBy}&sortDir=${sortDir}`;
+        setUrl(newUrl);
+        // setReload(true)
     }, [sortBy, sortDir, searchTerm]);
 
     const navigate = useNavigate()
@@ -164,6 +168,7 @@ export default function WarehouseIndex() {
                     disabled={result?.prev_page_url === null || isLoading}
                     onClick={() => {
                         setUrl(result?.prev_page_url!)
+                        setReload(true)
                     }}
                 >
                     <ArrowLeft/>
@@ -175,6 +180,7 @@ export default function WarehouseIndex() {
                     disabled={result?.next_page_url === null || isLoading}
                     onClick={() => {
                         setUrl(result?.next_page_url!)
+                        setReload(true)
                     }}
                 >
                     Next

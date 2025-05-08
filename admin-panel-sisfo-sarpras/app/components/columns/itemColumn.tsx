@@ -40,10 +40,10 @@ export const ItemColumn: ColumnDef<Item>[] = [
         cell: ({row}) => {
             const category = row.original.category
             return (
-                typeof category !== "undefined" ? (
+                typeof category !== "undefined" && category !== null ? (
                     <a href={`/categories/${category.slug}`} className={"underline"}>{category.name}</a>
                 ) : (
-                    <p className={"text-muted-foreground"}>Current category</p>
+                    <p className={"text-muted-foreground"}>Missing category</p>
                 )
             )
         }

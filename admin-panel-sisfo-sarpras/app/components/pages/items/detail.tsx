@@ -32,6 +32,7 @@ import {itemUnitColumn} from "~/components/columns/itemUnitColumn";
 import {Badge} from "~/components/ui/badge";
 import type {Item} from "~/types/item";
 import {ArrowUpRight, ArrowUpRightFromCircle} from "lucide-react";
+import {Skeleton} from "~/components/ui/skeleton";
 
 
 export default function ItemDetail() {
@@ -99,15 +100,15 @@ export default function ItemDetail() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className="flex flex-row gap-4">
-                <div className={"border-1 p-4 w-2/3 h-fit"}>
-                    {isLoading && <Spinner/>}
+            <div className="w-full flex flex-col gap-4">
+                <div className={"grid grid-cols-1 lg:grid-cols-2 gap-4"}>
                     {!isLoading && (
-                        <>
+                        <div className={"border-1 rounded-sm p-4"} >
                             <div className="space-y-4">
-                                <h4 className="text-lg font-medium leading-none flex flex-col">
-                                    <p>{item?.name}</p>
+                                <h4 className="text-lg">
+                                    {item?.name}
                                 </h4>
+                                <Separator className={"my-4"}/>
                                 <div className="text-sm text-muted-foreground space-y-2">
                                     <div className="border-1 rounded-sm size-36 p-2">
                                         <img src={item?.image_url} alt={item?.name} className="size-full object-contain"/>
@@ -156,50 +157,47 @@ export default function ItemDetail() {
                                 </AlertDialog>
 
                             </div>
-                        </>
+                        </div>
                     )}
-                </div>
-                <div className={"border-1 p-4 space-y-4"}>
-                    {isLoading && <Spinner/>}
                     {!isLoading && (
-                        <>
-                            <h4 className={"text-lg font-normal"}>
-                                Assigned Category
-                            </h4>
-                            <Separator/>
-                            <div className="space-y-4">
-                                <h4 className="text-lg font-medium leading-none flex flex-row space-x-2 justify-start items-center">
-                                    <p>{item?.category?.name}</p>
-                                    <Button variant={"outline"} size={"icon"} onClick={() => navigate(`/categories/${item?.category?.slug}`)}>
-                                        <ArrowUpRight/>
-                                    </Button>
-                                </h4>
-                                <p className="text-sm text-muted-foreground">
+                        <div className={"border-1 rounded-sm p-4"} >
+                            <h4 className={"text-lg"}>Assigned category</h4>
+                            <Separator className={"my-4"} />
+                            {item?.category ? (
+                                <>
+                                    <div className="space-y-4">
+                                        <h4 className="text-lg font-medium leading-none flex flex-row space-x-2 justify-start items-center">
+                                            <p>{item?.category?.name}</p>
+                                            <Button variant={"outline"} size={"icon"} onClick={() => navigate(`/categories/${item?.category?.slug}` )}>
+                                                <ArrowUpRight/>
+                                            </Button>
+                                        </h4>
+                                        <p className="text-sm text-muted-foreground">
                                     <span className="text-black">
                                         Description:
                                     </span> {item?.category?.description}
-                                </p>
-                            </div>
-                            <Separator className="my-4" />
-                            <div className="flex items-center space-x-4">
-                                <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${item?.category?.created_at}`}</p>
-                                <Separator orientation="vertical" />
-                                <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${item?.category?.updated_at}`}</p>
-                            </div>
-                        </>
+                                        </p>
+                                    </div>
+                                    <Separator className="my-4" />
+                                    <div className="flex items-center space-x-4">
+                                        <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${item?.category?.created_at}`}</p>
+                                        <Separator orientation="vertical" />
+                                        <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${item?.category?.updated_at}`}</p>
+                                    </div>
+                                </>
+                            ) : (<p className={"text-muted-foreground"}>Deleted category</p>)}
+                        </div>
                     )}
                 </div>
-            </div>
-            <div className={"border-1 p-4 space-y-4"}>
-                {isLoading && <Spinner/>}
                 {!isLoading && (
-                    <>
-                        <h4 className={"text-lg font-normal"}>
-                            List item units in this warehouse
+                    <div className={"border-1 rounded-sm p-4"} >
+                        <h4 className={"text-lg flex items-center"}>
+                            <span>List item units in this item</span>
                             <Badge className={cn("px-4 ml-2")}>{item?.item_units?.length ?? 0}</Badge>
                         </h4>
+                        <Separator className={"my-4"}/>
                         {item?.item_units && <DataTable columns={itemUnitColumn} data={item?.item_units}/>}
-                    </>
+                    </div>
                 )}
             </div>
         </div>

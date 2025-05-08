@@ -45,7 +45,15 @@ export const itemUnitColumn: ColumnDef<ItemUnit>[] = [
     },
     {
         accessorKey: "qr_image_url",
-        header: "Qr Image"
+        header: "Qr Image",
+        cell: ({row}) => {
+            const imageUrl = row.original.qr_image_url
+            return (
+                <div className="size-12 p-2 border-1 rounded-sm">
+                    <img src={imageUrl} alt={"image"} className={"object-contain size-full"}/>
+                </div>
+            )
+        }
     },
     {
         accessorKey: "item.name",
@@ -86,12 +94,12 @@ export const itemUnitColumn: ColumnDef<ItemUnit>[] = [
     {
         header: "Action",
         cell: ({ row }) => {
-            const item = row.original;
+            const itemUnit = row.original;
             const navigate = useNavigate()
 
             return (
                 <Button variant={"outline"} onClick={() => {
-                    // navigate(`/categories/${category.slug}`)
+                    navigate(`/item-units/${itemUnit.sku}`)
                 }}>
                     <SquareArrowOutUpRight/>
                 </Button>

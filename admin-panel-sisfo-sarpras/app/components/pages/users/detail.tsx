@@ -1,5 +1,6 @@
 import {useNavigate, useParams} from "react-router";
 import useApi from "~/hooks/use-api";
+import type {User} from "~/types/user";
 import {useCookies} from "~/hooks/use-cookies";
 import React, {useEffect, useState} from "react";
 import {Separator} from "~/components/ui/separator";
@@ -27,25 +28,24 @@ import {
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import {cn} from "~/lib/utils";
-import type {Warehouse} from "~/types/warehouse";
-import {itemUnitColumn} from "~/components/columns/itemUnitColumn";
 import {Badge} from "~/components/ui/badge";
 
 
-export default function WarehouseDetail() {
+export default function UserDetail() {
     const params = useParams()
     const navigate = useNavigate()
 
     const id = params.id
     const [token] = useCookies("auth_token")
 
-    const [warehouse, setWarehouse] = useState<Warehouse | undefined>()
+    const [user, setUser] = useState<User | undefined>()
     const [refetch, setRefetch] = useState(true)
 
     const baseUrl = import.meta.env.VITE_BASE_URL
-    const url = `${baseUrl}/api/admin/warehouses/${params.id}`
-    const {isLoading, error, result} = useApi<Warehouse>({
+    const url = `${baseUrl}/api/admin/users/${id!}`
+    const {isLoading, error, result} = useApi<User>({
         url: url,
+        method: "GET",
         headers: {
             Authorization: `Bearer ${token}`
         },
@@ -58,12 +58,12 @@ export default function WarehouseDetail() {
 
     useEffect(() => {
         if (!isLoading && error === null && result !== null) {
-            setWarehouse(result)
+            setUser(result)
         }
     }, [isLoading, error, result])
 
     const [isDeleting, setIsDeleting] = useState(false)
-    const {isLoading: isDeleteLoading} = useApi<Warehouse>({
+    const {isLoading: isDeleteLoading} = useApi<User>({
         url: url,
         method: "DELETE",
         headers: {
@@ -74,7 +74,7 @@ export default function WarehouseDetail() {
     useEffect(() => {
         if (isDeleting) {
             setIsDeleting(false)
-            if (!isDeleteLoading) navigate("/warehouses")
+            if (!isDeleteLoading) navigate("/users")
         }
     }, [isDeleting])
 
@@ -87,11 +87,11 @@ export default function WarehouseDetail() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/warehouses">Warehouse</BreadcrumbLink>
+                        <BreadcrumbLink href="/users">Users</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>{isLoading ? <Spinner/> : warehouse?.name}</BreadcrumbPage>
+                        <BreadcrumbPage>{isLoading ? <Spinner/> : user?.username}</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
@@ -101,39 +101,44 @@ export default function WarehouseDetail() {
                     <>
                         <div className="space-y-4">
                             <h4 className="text-lg font-medium leading-none flex flex-col">
-                                <p>{warehouse?.name}</p>
+                                <p>{user?.username}</p>
                             </h4>
-                            <div className="text-sm text-muted-foreground space-y-2">
-                                <p>
-                                    Location: {warehouse?.location}
-                                </p>
-                                <p>
-                                    Maximum Capacity: {warehouse?.capacity}
-                                </p>
-                            </div>
+                            <Separator className={"my-4"}/>
+                            <p className="text-sm text-muted-foreground">
+                                <span className={"font-normal"}>Email: </span>
+                                {user?.email ?? "-"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                <span className={"font-normal"}>Phone: </span>
+                                {user?.phone ?? "-"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                <span className={"font-normal"}>Role: </span>
+                                {user?.role}
+                            </p>
                         </div>
                         <Separator className="my-4" />
                         <div className="flex items-center space-x-4">
-                            <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${warehouse?.created_at}`}</p>
+                            <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${user?.created_at}`}</p>
                             <Separator orientation="vertical" />
-                            <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${warehouse?.updated_at}`}</p>
+                            <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${user?.updated_at}`}</p>
                         </div>
                         <Separator className="my-4" />
                         <div className="flex flex-col gap-2">
-                            <Button variant={"outline"} onClick={() => navigate(`/warehouses/${id}/edit`)}>
-                                Edit this warehouse
+                            <Button variant={"outline"} onClick={() => navigate(`/users/${id}/edit`)}>
+                                Edit this user
                             </Button>
                             <AlertDialog>
                                 <AlertDialogTrigger>
                                     <Button variant={"outline"} className={cn("w-full")}>
-                                        Delete this warehouse
+                                        Delete this user
                                     </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure want to delete this warehouse?</AlertDialogTitle>
+                                        <AlertDialogTitle>Are you sure want to delete this user?</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This action cannot be undone. You will need to create this warehouse again
+                                            This action cannot be undone. You will need to create this user again
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
@@ -144,21 +149,6 @@ export default function WarehouseDetail() {
                             </AlertDialog>
 
                         </div>
-                    </>
-                )}
-            </div>
-            <div className={"border-1 p-4 space-y-4"}>
-                {isLoading && <Spinner/>}
-                {!isLoading && (
-                    <>
-                        <div className="flex justify-start items-center gap-2">
-                            <h4 className={"text-lg font-normal"}>
-                                List item units in this item
-                            </h4>
-                            <Badge className={cn("px-4")}>{warehouse?.item_units?.length ?? 0}</Badge>
-                        </div>
-                        <Separator/>
-                        {warehouse?.item_units && <DataTable columns={itemUnitColumn} data={warehouse?.item_units}/>}
                     </>
                 )}
             </div>

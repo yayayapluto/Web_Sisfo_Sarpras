@@ -198,7 +198,7 @@ export function CreateItemForm() {
                                 <FormItem>
                                     <FormLabel>Types</FormLabel>
                                     <FormControl>
-                                        <RadioGroup onValueChange={field.onChange}>
+                                        <RadioGroup onValueChange={field.onChange} className={"pl-2"}>
                                             <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="consumable" id="consumable" />
                                                 <Label htmlFor="consumable">Consumable</Label>

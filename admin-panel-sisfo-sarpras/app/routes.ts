@@ -4,6 +4,12 @@ export default [
     index("routes/login.tsx"),
     layout("components/layouts/dashboard-layout.tsx", [
         route("dashboard", "components/pages/dashboard.tsx"),
+        ...prefix("users", [
+            index("components/pages/users/index.tsx"),
+            route("/create", "components/pages/users/create-form.tsx"),
+            route("/:id", "components/pages/users/detail.tsx"),
+            route("/:id/edit", "components/pages/users/update-form.tsx"),
+        ]),
         ...prefix("categories", [
             index("components/pages/categories/index.tsx"),
             route("/create", "components/pages/categories/create-form.tsx"),
@@ -21,6 +27,12 @@ export default [
             route("/create", "components/pages/items/create-form.tsx"),
             route("/:id", "components/pages/items/detail.tsx"),
             route("/:id/edit", "components/pages/items/update-form.tsx"),
+        ]),
+        ...prefix("item-units", [
+            index("components/pages/itemUnits/index.tsx"),
+            route("/create", "components/pages/itemUnits/create-form.tsx"),
+            route("/:sku", "components/pages/itemUnits/detail.tsx"),
+            route("/:sku/edit", "components/pages/itemUnits/update-form.tsx"),
         ]),
     ])
 ] satisfies RouteConfig;

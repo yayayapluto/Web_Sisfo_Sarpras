@@ -2,8 +2,6 @@ import React, {type ChangeEvent, useEffect, useState} from "react";
 import {ArrowDownIcon, ArrowLeft, ArrowRight, ArrowUpIcon, Plus, RefreshCcw} from "lucide-react";
 import { cn } from "~/lib/utils";
 import { DataTable } from "~/components/ui/data-table";
-import { CategoryColumn } from "~/components/columns/categoryColumn";
-import {type Category} from "~/types/category";
 import {
     DropdownMenu, DropdownMenuCheckboxItem,
     DropdownMenuContent,
@@ -35,18 +33,26 @@ import {
     BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb"
 import {useNavigate} from "react-router";
+import {WarehouseColumn} from "~/components/columns/warehouseColumn";
+import type {Warehouse} from "~/types/warehouse";
+import {ItemColumn} from "~/components/columns/itemColumn";
+import type {Item} from "~/types/item";
+import {itemUnitColumn} from "~/components/columns/itemUnitColumn";
+import type {ItemUnit} from "~/types/itemUnit";
 
 type sortDirType = 'asc' | 'desc'
-type sortByType = 'name' | 'created_at'
+type sortByType = 'sku' | 'condition' | 'acquisition_source' | 'acquisition_date' | 'quantity' | 'item_id' | 'warehouse_id' | 'created_at'
+type statusType = 'available' | 'borrowed' | 'unknown' | 'none'
 
-export default function CategoryIndex() {
+export default function ItemUnitIndex() {
     useProtectRoute()
     const [sortDir, setSortDir] = useState<sortDirType>("asc");
     const [sortBy, setSortBy] = useState<sortByType>("created_at");
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const [status, setStatus] = useState<statusType>("none")
 
     const baseUrl = import.meta.env.VITE_BASE_URL
-    const [url, setUrl] = useState(`${baseUrl}/api/admin/categories`)
+    const [url, setUrl] = useState(`${baseUrl}/api/admin/itemUnits?with=item,item.category,warehouse`)
     const [reload, setReload] = useState(false)
 
     useEffect(() => {
@@ -64,7 +70,7 @@ export default function CategoryIndex() {
     }, [url])
 
     useEffect(() => {
-        const newUrl = `${baseUrl}/api/admin/categories?search=${searchTerm}&sortBy=${sortBy}&sortDir=${sortDir}`;
+        const newUrl = `${baseUrl}/api/admin/itemUnits?with=item,item.category,warehouse&search=${searchTerm}&sortBy=${sortBy}&sortDir=${sortDir}`;
         setUrl(newUrl);
         // setReload(true)
     }, [sortBy, sortDir, searchTerm]);
@@ -72,7 +78,7 @@ export default function CategoryIndex() {
     const navigate = useNavigate()
 
     const [token] = useCookies("auth_token")
-    const { isLoading, error, result } = useApi<PaginationResponse<Category>>({
+    const { isLoading, error, result } = useApi<PaginationResponse<ItemUnit>>({
         url: url,
         headers: {
             Authorization: `Bearer ${token}`
@@ -90,7 +96,6 @@ export default function CategoryIndex() {
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-        setReload(true)
     };
 
     return (
@@ -102,7 +107,7 @@ export default function CategoryIndex() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>Categories</BreadcrumbPage>
+                        <BreadcrumbPage>Item Units</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
@@ -127,7 +132,13 @@ export default function CategoryIndex() {
                                 <DropdownMenuRadioGroup value={sortBy} onValueChange={value => {
                                     setSortBy(value as sortByType)
                                 }}>
-                                    <DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="sku">SKU</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="condition">Condition</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="acquisition_source">Acquisition Source</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="acquisition_date">Acquisition Date</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="quantity">Quantity</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="item_id">Parent Item</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="warehouse_id">Warehouse</DropdownMenuRadioItem>
                                     <DropdownMenuRadioItem value="created_at">Created at</DropdownMenuRadioItem>
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
@@ -144,7 +155,7 @@ export default function CategoryIndex() {
                         <RefreshCcw className={`${isLoading && "animate-spin"}`}/>
                     </Button>
 
-                    <Button className={cn("bg-tb hover:bg-tb-sec")} disabled={isLoading} onClick={() => navigate("/categories/create")}>
+                    <Button className={cn("bg-tb hover:bg-tb-sec")} disabled={isLoading} onClick={() => navigate("/item-units/create")}>
                         Add new
                         <Plus/>
                     </Button>
@@ -156,7 +167,7 @@ export default function CategoryIndex() {
                     <Spinner/>
                 </Skeleton>
             )}
-            {!error && !isLoading && result && <DataTable columns={CategoryColumn} data={result.data} />}
+            {!error && !isLoading && result && <DataTable columns={itemUnitColumn} data={result.data} />}
 
             <div className="flex items-center justify-start space-x-2 py-4">
                 <Button
