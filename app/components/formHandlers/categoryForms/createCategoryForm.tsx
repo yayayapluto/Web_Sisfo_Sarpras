@@ -74,7 +74,7 @@ export function CreateCategoryForm() {
         setIsSubmitting(true)
         form.reset({
             name: "",
-            description: ""
+            description: "-"
         })
     }
 

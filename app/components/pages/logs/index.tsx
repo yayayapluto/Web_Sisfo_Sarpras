@@ -39,12 +39,16 @@ import {ItemColumn} from "~/components/columns/itemColumn";
 import type {Item} from "~/types/item";
 import {itemUnitColumn} from "~/components/columns/itemUnitColumn";
 import type {ItemUnit} from "~/types/itemUnit";
+import type { BorrowRequest } from "~/types/borrowRequest";
+import { BorrowRequestColumn } from "~/components/columns/borrowRequestColumn";
+import type { Log } from "~/types/log";
+import { LogColumn } from "~/components/columns/logColumn";
 
 type sortDirType = 'asc' | 'desc'
-type sortByType = 'sku' | 'condition' | 'acquisition_source' | 'acquisition_date' | 'quantity' | 'item_id' | 'warehouse_id' | 'created_at'
+type sortByType = 'status' | 'user_id' | 'created_at'
 type statusType = 'available' | 'borrowed' | 'unknown' | 'none'
 
-export default function ItemUnitIndex() {
+export default function LogIndex() {
     useProtectRoute()
     const [sortDir, setSortDir] = useState<sortDirType>("asc");
     const [sortBy, setSortBy] = useState<sortByType>("created_at");
@@ -52,7 +56,7 @@ export default function ItemUnitIndex() {
     const [status, setStatus] = useState<statusType>("none")
 
     const baseUrl = import.meta.env.VITE_BASE_URL
-    const [url, setUrl] = useState(`${baseUrl}/api/admin/itemUnits?with=item,item.category,warehouse`)
+    const [url, setUrl] = useState(`${baseUrl}/api/admin/logs?with:performer`)
     const [reload, setReload] = useState(false)
 
     useEffect(() => {
@@ -66,7 +70,7 @@ export default function ItemUnitIndex() {
     }, [reload]);
 
     useEffect(() => {
-        const newUrl = `${baseUrl}/api/admin/itemUnits?with=item,item.category,warehouse&search=${searchTerm}&sortBy=${sortBy}&sortDir=${sortDir}`;
+        const newUrl = `${baseUrl}/api/admin/logs?with=performer&search=${searchTerm}&sortBy=${sortBy}&sortDir=${sortDir}`;
         setUrl(newUrl);
         setReload(true)
     }, [sortBy, sortDir, searchTerm]);
@@ -74,7 +78,7 @@ export default function ItemUnitIndex() {
     const navigate = useNavigate()
 
     const [token] = useCookies("auth_token")
-    const { isLoading, error, result } = useApi<PaginationResponse<ItemUnit>>({
+    const { isLoading, error, result } = useApi<PaginationResponse<Log>>({
         url: url,
         headers: {
             Authorization: `Bearer ${token}`
@@ -103,7 +107,7 @@ export default function ItemUnitIndex() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>Item Units</BreadcrumbPage>
+                        <BreadcrumbPage>Log Activities</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
@@ -128,13 +132,8 @@ export default function ItemUnitIndex() {
                                 <DropdownMenuRadioGroup value={sortBy} onValueChange={value => {
                                     setSortBy(value as sortByType)
                                 }}>
-                                    <DropdownMenuRadioItem value="sku">SKU</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="condition">Condition</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="acquisition_source">Acquisition Source</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="acquisition_date">Acquisition Date</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="quantity">Quantity</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="item_id">Parent Item</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="warehouse_id">Warehouse</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="status">Status</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="user_id">User</DropdownMenuRadioItem>
                                     <DropdownMenuRadioItem value="created_at">Created at</DropdownMenuRadioItem>
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
@@ -150,11 +149,6 @@ export default function ItemUnitIndex() {
                         Reload
                         <RefreshCcw className={`${isLoading && "animate-spin"}`}/>
                     </Button>
-
-                    <Button className={cn("")} disabled={isLoading} onClick={() => navigate("/item-units/create")}>
-                        Add new
-                        <Plus/>
-                    </Button>
                 </div>
             </div>
 
@@ -163,7 +157,7 @@ export default function ItemUnitIndex() {
                     <Spinner/>
                 </Skeleton>
             )}
-            {!error && !isLoading && result && <DataTable columns={itemUnitColumn} data={result.data} />}
+            {!error && !isLoading && result && <DataTable columns={LogColumn} data={result.data} />}
 
             <div className="flex items-center justify-start space-x-2 py-4">
                 <Button

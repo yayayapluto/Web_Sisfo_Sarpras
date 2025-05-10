@@ -127,7 +127,7 @@ const adminMenuItems = [
         items: [
             {
                 title: "Logs",
-                url: "/log-activities",
+                url: "/logs",
                 icon: Search,
             },
         ],

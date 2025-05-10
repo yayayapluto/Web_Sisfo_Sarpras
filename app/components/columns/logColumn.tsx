@@ -3,31 +3,38 @@ import {useNavigate} from "react-router";
 import {Button} from "~/components/ui/button";
 import {SquareArrowOutUpRight} from "lucide-react";
 import type {Warehouse} from "~/types/warehouse";
-import type {BorrowRequest} from "~/types/borrowRequest";
-import type {ReturnRequest} from "~/types/returnRequest";
+import type { Log } from "~/types/log";
 
 
-export const ReturnRequestColumn: ColumnDef<ReturnRequest>[] = [
+export const LogColumn: ColumnDef<Log>[] = [
     {
         accessorKey: "id",
         header: "ID",
     },
     {
-        accessorKey: "status",
-        header: "Status",
+        accessorKey: "entity",
+        header: "Entity",
     },
     {
-        accessorKey: "notes",
-        header: "Notes",
+        accessorKey: "entity_id",
+        header: "Entity id",
     },
     {
-        accessorKey: "borrow_request_id",
-        header: "Borrow request id",
+        accessorKey: "type",
+        header: "Type",
     },
     {
-        accessorKey: "handler.username",
-        header: "Handled by",
-        cell: ({row}) => row.original.handler?.username ?? "-"
+        accessorKey: "ip_address",
+        header: "Ip Address",
+    },
+    {
+        accessorKey: "user_agent",
+        header: "User Agent",
+    },
+    {
+        accessorKey: "performer.username",
+        header: "Performed By",
+        cell: ({row}) => row.original.performer ?? "Seeder"
     },
     {
         accessorKey: "created_at",
@@ -40,12 +47,12 @@ export const ReturnRequestColumn: ColumnDef<ReturnRequest>[] = [
     {
         header: "Action",
         cell: ({ row }) => {
-            const returnRequest = row.original;
+            const log = row.original;
             const navigate = useNavigate()
 
             return (
                 <Button variant={"outline"} onClick={() => {
-                    navigate(`/return-requests/${returnRequest.id}`)
+                    navigate(`/logs/${log.id}`)
                 }}>
                     <SquareArrowOutUpRight/>
                 </Button>

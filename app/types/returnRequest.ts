@@ -8,6 +8,8 @@ export type ReturnRequest = Mandatory & {
     status: 'pending' | 'approved' | 'rejected'
     notes?: string
     borrow_request_id: number
-    borrowRequest?: BorrowRequest
-    returnDetails?: ReturnDetail
+    handled_by?: number
+    borrow_request?: BorrowRequest
+    return_details?: ReturnDetail[]
+    handler?: User
 }

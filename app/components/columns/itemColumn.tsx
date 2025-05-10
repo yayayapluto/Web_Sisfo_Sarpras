@@ -28,7 +28,7 @@ export const ItemColumn: ColumnDef<Item>[] = [
         cell: ({row}) => {
             const imageUrl = row.original.image_url
             return (
-                <div className="size-24 p-2 border-1 rounded-sm">
+                <div className="size-16 p-2 border-1 rounded-sm">
                     <img src={imageUrl} alt={"image"} className={"object-contain size-full"}/>
                 </div>
             )

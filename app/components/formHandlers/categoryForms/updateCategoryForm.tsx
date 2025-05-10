@@ -26,7 +26,7 @@ export function UpdateCategoryForm({category}: UpdateCategoryFormProps) {
     const form = useForm<z.infer<typeof formUpdateSchema>>({
         resolver: zodResolver(formUpdateSchema),
         defaultValues: {
-            description: ""
+            description: "-"
         }
     })
 
@@ -43,7 +43,7 @@ export function UpdateCategoryForm({category}: UpdateCategoryFormProps) {
         if (category) {
             form.reset({
                 name: category.name,
-                description: category.description || ""
+                description: category.description || "-"
             })
         }
     }, [category, form])
@@ -76,7 +76,7 @@ export function UpdateCategoryForm({category}: UpdateCategoryFormProps) {
         if (category) {
             form.reset({
                 name: category.name,
-                description: category.description || ""
+                description: category.description || "-"
             })
         }
     }

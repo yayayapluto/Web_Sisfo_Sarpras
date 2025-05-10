@@ -102,7 +102,7 @@ export function CreateItemUnitForm() {
         form.reset({
             condition: "",
             acquisition_source: "",
-            acquisition_date: date,
+            acquisition_date: new Date(),
             quantity: "",
             item_id: "",
             warehouse_id: "",
@@ -195,7 +195,7 @@ export function CreateItemUnitForm() {
                                         <FormItem>
                                             <FormLabel>Acquisition Source</FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input  {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -268,7 +268,7 @@ export function CreateItemUnitForm() {
                                 <FormItem>
                                     <FormLabel>Item</FormLabel>
                                     <FormControl>
-                                        <Select defaultValue={form.getValues("item_id")} onValueChange={(value) => {
+                                        <Select value={field.value} onValueChange={(value) => {
                                             form.setValue("item_id", value);
                                             const selectedItem = itemResult?.data.find(item => String(item.id) === value);
                                             if (selectedItem) {
@@ -286,9 +286,9 @@ export function CreateItemUnitForm() {
                                                 </div>
                                                 <Separator className={cn("my-2")} />
                                                 <SelectGroup>
-                                                    <ScrollArea className={cn("h-16")}>
+                                                    <ScrollArea className={cn("h-32")}>
                                                         {isItemLoading && (
-                                                            <div className="flex w-full h-64 justify-center items-center">
+                                                            <div className="flex w-full h-32 justify-center items-center">
                                                                 <Spinner/>
                                                             </div>
                                                         )}
@@ -315,7 +315,7 @@ export function CreateItemUnitForm() {
                                 <FormItem>
                                     <FormLabel>Warehouse</FormLabel>
                                     <FormControl>
-                                        <Select defaultValue={form.getValues("warehouse_id")} onValueChange={field.onChange}>
+                                        <Select value={field.value} onValueChange={field.onChange}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Warehouse" />
                                             </SelectTrigger>
@@ -325,9 +325,9 @@ export function CreateItemUnitForm() {
                                                 </div>
                                                 <Separator className={cn("my-2")} />
                                                 <SelectGroup>
-                                                    <ScrollArea className={cn("h-16")}>
+                                                    <ScrollArea className={cn("h-32")}>
                                                         {isWarehouseLoading && (
-                                                            <div className="flex w-full h-64 justify-center items-center">
+                                                            <div className="flex w-full h-32 justify-center items-center">
                                                                 <Spinner/>
                                                             </div>
                                                         )}

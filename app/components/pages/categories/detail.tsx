@@ -135,7 +135,7 @@ export default function CategoryDetail() {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => setIsDeleting(true)} className={cn("bg-tb hover:bg-tb-sec")}>Continue</AlertDialogAction>
+                                        <AlertDialogAction onClick={() => setIsDeleting(true)} className={cn("")}>Continue</AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
@@ -150,7 +150,7 @@ export default function CategoryDetail() {
                     <>
                         <div className="flex justify-start items-center gap-2">
                             <h4 className={"text-lg font-normal"}>
-                                List item units in this item
+                                List items in this category
                             </h4>
                             <Badge className={cn("px-4")}>{category?.items?.length ?? 0}</Badge>
                         </div>

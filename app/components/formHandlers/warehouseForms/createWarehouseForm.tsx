@@ -84,7 +84,7 @@ export function CreateWarehouseForm() {
         form.reset({
             name: "",
             location: "",
-            capacity: "0"
+            capacity: ""
         })
     }
 

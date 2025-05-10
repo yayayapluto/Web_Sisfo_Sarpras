@@ -48,6 +48,9 @@ const formCreateSchema = z.object({
 export function CreateItemForm() {
     const form = useForm<z.infer<typeof formCreateSchema>>({
         resolver: zodResolver(formCreateSchema),
+        defaultValues: {
+            description: "-"
+        }
     })
 
     const [data, setData] = useState<z.infer<typeof formCreateSchema> | FormData | null>(null)
@@ -96,8 +99,8 @@ export function CreateItemForm() {
         setIsSubmitting(true)
         form.reset({
             name: "",
-            description: "",
-            image: undefined,
+            description: "-",
+            image: "",
             type: "",
             category: ""
         })
@@ -121,8 +124,8 @@ export function CreateItemForm() {
         setCategorySearch("")
         form.reset({
             name: "",
-            description: "",
-            image: undefined,
+            description: "-",
+            image: "",
             type: "",
             category: ""
         })
@@ -198,7 +201,7 @@ export function CreateItemForm() {
                                 <FormItem>
                                     <FormLabel>Types</FormLabel>
                                     <FormControl>
-                                        <RadioGroup onValueChange={field.onChange} className={"pl-2"}>
+                                        <RadioGroup value={field.value} onValueChange={field.onChange} className={"pl-2"}>
                                             <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="consumable" id="consumable" />
                                                 <Label htmlFor="consumable">Consumable</Label>
@@ -222,7 +225,7 @@ export function CreateItemForm() {
                                 <FormItem>
                                     <FormLabel>Category</FormLabel>
                                     <FormControl>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select value={field.value} onValueChange={field.onChange}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Categories" />
                                             </SelectTrigger>
@@ -232,9 +235,9 @@ export function CreateItemForm() {
                                                 </div>
                                                 <Separator className={cn("my-2")} />
                                                 <SelectGroup>
-                                                    <ScrollArea className={cn("h-64")}>
+                                                    <ScrollArea className={cn("h-32")}>
                                                         {isCategoryLoading && (
-                                                            <div className="flex w-full h-64 justify-center items-center">
+                                                            <div className="flex w-full h-32 justify-center items-center">
                                                                 <Spinner/>
                                                             </div>
                                                         )}

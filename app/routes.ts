@@ -37,6 +37,14 @@ export default [
         ...prefix("borrow-requests", [
             index("components/pages/borrowRequests/index.tsx"),
             route("/:id", "components/pages/borrowRequests/detail.tsx"),
+        ]),
+        ...prefix("return-requests", [
+            index("components/pages/returnRequests/index.tsx"),
+            route("/:id", "components/pages/returnRequests/detail.tsx"),
+        ]),
+        ...prefix("logs", [
+            index("components/pages/logs/index.tsx"),
+            route("/:id", "components/pages/logs/detail.tsx"),
         ])
     ])
 ] satisfies RouteConfig;

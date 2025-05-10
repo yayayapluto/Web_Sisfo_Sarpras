@@ -176,7 +176,7 @@ export default function ItemUnitDetail() {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => setIsDeleting(true)} className={cn("bg-tb hover:bg-tb-sec")}>Continue</AlertDialogAction>
+                                            <AlertDialogAction onClick={() => setIsDeleting(true)} className={cn("")}>Continue</AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>

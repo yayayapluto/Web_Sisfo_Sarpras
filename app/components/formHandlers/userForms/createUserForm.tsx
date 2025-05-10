@@ -80,7 +80,7 @@ export function CreateUserForm() {
             username: undefined,
             email: undefined,
             phone: undefined,
-            role: undefined,
+            role: "",
             password: undefined
         })
     }
@@ -96,7 +96,7 @@ export function CreateUserForm() {
                         <FormItem>
                             <FormLabel>Username</FormLabel>
                             <FormControl>
-                                <Input {...field} />
+                                <Input {...field} disabled={isSubmitting} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -109,7 +109,7 @@ export function CreateUserForm() {
                         <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                                <Input {...field} type={"password"} />
+                                <Input {...field} type={"password"} disabled={isSubmitting} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -122,7 +122,7 @@ export function CreateUserForm() {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Input {...field} disabled={isSubmitting} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -135,7 +135,7 @@ export function CreateUserForm() {
                             <FormItem>
                                 <FormLabel>Phone</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Input {...field} disabled={isSubmitting} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -148,7 +148,7 @@ export function CreateUserForm() {
                         <FormItem>
                             <FormLabel>Role</FormLabel>
                             <FormControl>
-                                <Select onValueChange={field.onChange}>
+                                <Select {...field} defaultValue="" onValueChange={field.onChange} disabled={isSubmitting}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Roles" />
                                     </SelectTrigger>
