@@ -43,7 +43,7 @@ export default function CategoryEdit () {
     }, [isLoading, error, result])
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -63,9 +63,11 @@ export default function CategoryEdit () {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
+            <div className="grid py-4 grid-cols-1 lg:grid-cols-2">
             <div className={"border-1 p-4 space-y-4"}>
                 {isLoading && <Spinner/>}
                 {!isLoading && category && (<UpdateCategoryForm category={category}/>)}
+            </div>
             </div>
         </div>
     )

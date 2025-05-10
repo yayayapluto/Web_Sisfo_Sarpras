@@ -84,7 +84,7 @@ export default function ItemUnitDetail() {
     }, [isDeleting])
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -100,7 +100,7 @@ export default function ItemUnitDetail() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-4 py-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {!isLoading && (
                         <div className={"border-1 rounded-sm p-4"}>
@@ -214,12 +214,6 @@ export default function ItemUnitDetail() {
                                         </p>
                                     </div>
                                 </div>
-                                <Separator className="my-4" />
-                                <div className="flex itemUnits-center space-x-4">
-                                    <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${itemUnit?.item?.created_at}`}</p>
-                                    <Separator orientation="vertical" />
-                                    <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${itemUnit?.item?.updated_at}`}</p>
-                                </div>
                             </div>
                         )}
                         {!isLoading && itemUnit?.warehouse && (
@@ -243,12 +237,6 @@ export default function ItemUnitDetail() {
                                             Maximum Capacity: {itemUnit?.warehouse?.capacity}
                                         </p>
                                     </div>
-                                </div>
-                                <Separator className="my-4" />
-                                <div className="flex itemUnits-center space-x-4">
-                                    <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${itemUnit?.item?.created_at}`}</p>
-                                    <Separator orientation="vertical" />
-                                    <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${itemUnit?.item?.updated_at}`}</p>
                                 </div>
                             </div>
                         )}

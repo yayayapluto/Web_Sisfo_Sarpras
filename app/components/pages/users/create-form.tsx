@@ -5,13 +5,13 @@ import {
     BreadcrumbList, BreadcrumbPage,
     BreadcrumbSeparator
 } from "~/components/ui/breadcrumb";
-import {CreateCategoryForm} from "~/components/formHandlers/categoryForms/createCategoryForm";
+import { CreateCategoryForm } from "~/components/formHandlers/categoryForms/createCategoryForm";
 import React from "react";
-import {CreateUserForm} from "~/components/formHandlers/userForms/createUserForm";
+import { CreateUserForm } from "~/components/formHandlers/userForms/createUserForm";
 
-export default function CreateCategory () {
+export default function CreateCategory() {
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -27,8 +27,10 @@ export default function CreateCategory () {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className={"border-1 p-4 space-y-4"}>
-                <CreateUserForm/>
+            <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
+                <div className={"border-1 rounded-sm p-4 space-y-4"}>
+                    <CreateUserForm />
+                </div>
             </div>
         </div>
     )

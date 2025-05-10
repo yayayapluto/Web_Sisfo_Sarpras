@@ -105,7 +105,7 @@ export default function ItemIndex() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className="flex flex-col py-8 justify-between gap-5">
+            <div className="flex flex-col py-4 justify-between gap-5">
                 <div className={"flex flex-col lg:flex-row gap-5"}>
                     <Input
                         placeholder="Search"

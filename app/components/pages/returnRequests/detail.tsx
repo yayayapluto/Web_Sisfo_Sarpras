@@ -73,7 +73,7 @@ export default function ReturnRequestDetail() {
     const [requestStatus, setRequestStatus] = useState<'approve' | 'reject' | undefined>()
     const [fireAction, setFireAction] = useState(false)
     const [actionUrl, setActionUrl] = useState("")
-    const { isLoading: isActionLoading } = useApi<string>({
+    const { isLoading: isActionLoading, result: actionResult } = useApi<string>({
         url: actionUrl,
         method: "PATCH",
         headers: {
@@ -81,19 +81,28 @@ export default function ReturnRequestDetail() {
         },
         trigger: fireAction
     })
+    
     useEffect(() => {
-        if (requestStatus) {
-            setActionUrl(`${url}/${requestStatus}`)
-            setFireAction(true)
-            if (!isActionLoading) {
-                setRefetch(true)
+            if (requestStatus) {
+                setActionUrl(`${url}/${requestStatus}`);
             }
-        }
-    }, [requestStatus])
+        }, [requestStatus]);
+        
+        useEffect(() => {
+            if (actionUrl) {
+                setFireAction(true);
+            }
+        }, [actionUrl]);
+        
+        useEffect(() => {
+            if (!isActionLoading && actionResult) {
+                setRefetch(true);
+            }
+        }, [isActionLoading, actionResult]);
 
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -101,7 +110,7 @@ export default function ReturnRequestDetail() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/return-requests">Return-Requests</BreadcrumbLink>
+                        <BreadcrumbLink href="/return-requests">Return Requests</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -109,7 +118,7 @@ export default function ReturnRequestDetail() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-4 py-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {!isLoading && (
                         <>
@@ -209,11 +218,11 @@ export default function ReturnRequestDetail() {
                             </div>
                             <div className="border-1 rounded-sm p-4">
                                 <h4 className="text-lg">
-                                    Borrow Request Details
+                                    Return Request Details
                                 </h4>
                                 <Separator className={"my-4"} />
                                 {returnRequest?.return_details ? (
-                                    <ScrollArea className="h-64" >
+                                    <ScrollArea className="max-h-64" >
                                         {returnRequest?.return_details?.map(detail => (
                                             <>
                                                 <div className="border-1 rounded-xs p-2 my-2 flex gap-2">
@@ -240,7 +249,7 @@ export default function ReturnRequestDetail() {
                                 </h4>
                                 <Separator className={"my-4"} />
                                 {returnRequest?.borrow_request ? (
-                                    <ScrollArea className="h-64" >
+                                    <ScrollArea className="max-h-64" >
                                         {returnRequest?.borrow_request?.borrow_details?.map(detail => (
                                             <>
                                                 <div className="border-1 rounded-xs p-2 my-2 flex gap-2">

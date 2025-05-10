@@ -79,7 +79,7 @@ export default function WarehouseDetail() {
     }, [isDeleting])
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -95,7 +95,8 @@ export default function WarehouseDetail() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className={"border-1 p-4"}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 py-4">
+            <div className={"border-1 rounded-sm p-4"}>
                 {isLoading && <Spinner/>}
                 {!isLoading && (
                     <>
@@ -113,7 +114,7 @@ export default function WarehouseDetail() {
                             </div>
                         </div>
                         <Separator className="my-4" />
-                        <div className="flex items-center space-x-4">
+                        <div className="flex flex-wrap items-center gap-2">
                             <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${warehouse?.created_at}`}</p>
                             <Separator orientation="vertical" />
                             <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${warehouse?.updated_at}`}</p>
@@ -138,7 +139,7 @@ export default function WarehouseDetail() {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => setIsDeleting(true)} className={cn("bg-tb hover:bg-tb-sec")}>Continue</AlertDialogAction>
+                                        <AlertDialogAction onClick={() => setIsDeleting(true)} className={cn("")}>Continue</AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
@@ -147,7 +148,7 @@ export default function WarehouseDetail() {
                     </>
                 )}
             </div>
-            <div className={"border-1 p-4 space-y-4"}>
+            <div className={"border-1 rounded-sm p-4 space-y-4 " }>
                 {isLoading && <Spinner/>}
                 {!isLoading && (
                     <>
@@ -161,6 +162,7 @@ export default function WarehouseDetail() {
                         {warehouse?.item_units && <DataTable columns={itemUnitColumn} data={warehouse?.item_units}/>}
                     </>
                 )}
+            </div>
             </div>
         </div>
     )

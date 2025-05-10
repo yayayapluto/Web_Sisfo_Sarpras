@@ -77,11 +77,11 @@ export function CreateUserForm() {
         setData(values)
         setIsSubmitting(true)
         form.reset({
-            username: undefined,
-            email: undefined,
-            phone: undefined,
+            username: "",
+            email: "",
+            phone: "",
             role: "",
-            password: undefined
+            password: ""
         })
     }
 

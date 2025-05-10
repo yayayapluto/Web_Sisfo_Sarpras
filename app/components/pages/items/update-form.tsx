@@ -43,7 +43,7 @@ export default function ItemEdit () {
     }, [isLoading, error, result])
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -63,7 +63,7 @@ export default function ItemEdit () {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className={"border-1 p-4 space-y-4"}>
+            <div className={"border-1 p-4 space-y-4 py-4"}>
                 {isLoading && <Spinner/>}
                 {!isLoading && item && (<UpdateItemForm item={item}/>)}
             </div>

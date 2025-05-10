@@ -25,7 +25,7 @@ export const BorrowRequestColumn: ColumnDef<BorrowRequest>[] = [
     },
     {
         accessorKey: "user.username",
-        header: "User",
+        header: "Borrower",
     },
     {
         accessorKey: "handler.username",

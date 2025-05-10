@@ -43,7 +43,7 @@ export default function WarehouseEdit () {
     }, [isLoading, error, result])
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -63,9 +63,11 @@ export default function WarehouseEdit () {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className={"border-1 p-4 space-y-4"}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 py-4">
+            <div className={"border-1 rounded-sm p-4 space-y-4"}>
                 {isLoading && <Spinner/>}
                 {!isLoading && warehouse && (<UpdateWarehouseUpdForm warehouse={warehouse}/>)}
+            </div>
             </div>
         </div>
     )

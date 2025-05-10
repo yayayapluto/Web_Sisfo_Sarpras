@@ -44,7 +44,7 @@ export default function ItemUnitEdit () {
     }, [isLoading, error, result])
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>

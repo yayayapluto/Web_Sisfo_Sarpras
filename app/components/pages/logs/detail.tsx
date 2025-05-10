@@ -73,7 +73,7 @@ export default function LogDetail() {
 
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -89,11 +89,11 @@ export default function LogDetail() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-4 py-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {!isLoading && (
                         <>
-                            <div className={"border-1 rounded-sm p-4 col-span-2"}>
+                            <div className={"border-1 rounded-sm p-4 lg:col-span-2"}>
                                 <div className="space-y-4">
                                     <h4 className="text-lg">
                                         Log Activity Overview

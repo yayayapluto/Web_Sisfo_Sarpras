@@ -245,7 +245,7 @@ export function AppSidebar() {
                                                     <Button variant={"outline"} onClick={logoutBtnHandler}>
                                                         Yes, log out
                                                     </Button>
-                                                    <Button className={cn("bg-tb hover:bg-tb-sec")}>
+                                                    <Button className={cn("")}>
                                                         No, i'll stay
                                                     </Button>
                                                 </>

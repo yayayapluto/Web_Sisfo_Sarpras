@@ -43,7 +43,7 @@ export default function UserEdit () {
     }, [isLoading, error, result])
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -55,7 +55,9 @@ export default function UserEdit () {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href={`/users/${id}`}>{user?.username}</BreadcrumbLink>
+                        <BreadcrumbLink href={`/users/${id}`}>{
+                            isLoading ? <Spinner/> : user?.username
+                        }</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -63,9 +65,11 @@ export default function UserEdit () {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className={"border-1 p-4 space-y-4"}>
-                {isLoading && <Spinner/>}
-                {!isLoading && user && (<UpdateUserForm user={user}/>)}
+            <div className="grid grid-cols-1 lg:grid-cols-2 w-full py-4">
+                <div className={"border-1 rounded-sm p-4 space-y-4"}>
+                    {isLoading && <Spinner/>}
+                    {!isLoading && user && (<UpdateUserForm user={user}/>)}
+                </div>
             </div>
         </div>
     )

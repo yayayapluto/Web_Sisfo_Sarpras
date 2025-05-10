@@ -11,7 +11,7 @@ import {CreateItemUnitForm} from "~/components/formHandlers/itemUnitForms/create
 
 export default function CreateItemUnit () {
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -27,7 +27,7 @@ export default function CreateItemUnit () {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className={"border-1 p-4 space-y-4"}>
+            <div className={"border-1 rounded-sm p-4 lg:w-2/3"}>
                 {/*<CreateItemForm/>*/}
                 <CreateItemUnitForm/>
             </div>

@@ -84,7 +84,7 @@ export default function ItemDetail() {
     }, [isDeleting])
 
     return (
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 py-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -100,7 +100,7 @@ export default function ItemDetail() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-4 py-4">
                 <div className={"grid grid-cols-1 lg:grid-cols-2 gap-4"}>
                     {!isLoading && (
                         <div className={"border-1 rounded-sm p-4"} >
@@ -151,7 +151,7 @@ export default function ItemDetail() {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => setIsDeleting(true)} className={cn("bg-tb hover:bg-tb-sec")}>Continue</AlertDialogAction>
+                                            <AlertDialogAction onClick={() => setIsDeleting(true)} className={cn("")}>Continue</AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
@@ -179,12 +179,6 @@ export default function ItemDetail() {
                                                 Description:
                                             </span> {item?.category?.description}
                                         </p>
-                                    </div>
-                                    <Separator className="my-4" />
-                                    <div className="flex items-center space-x-4">
-                                        <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Created at ${item?.category?.created_at}`}</p>
-                                        <Separator orientation="vertical" />
-                                        <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${item?.category?.updated_at}`}</p>
                                     </div>
                                 </>
                             ) : (<p className={"text-muted-foreground"}>Deleted category</p>)}
