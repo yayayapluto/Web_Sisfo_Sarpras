@@ -47,6 +47,7 @@ const formCreateSchema = z.object({
     acquisition_date: z.any(),
     acquisition_notes: z.string().optional(),
     quantity: z.string().nonempty("Quantity field cant be empty"),
+    current_location: z.string().nonempty("Current location field cant be empty"),
     item_id: z.string().nonempty("Item_id field cant be empty"),
     warehouse_id: z.string().nonempty("Warehouse_id field cant be empty"),
 })
@@ -92,7 +93,7 @@ export function CreateItemUnitForm() {
             condition: "",
             acquisition_source: "",
             acquisition_date: new Date(),
-            quantity: "",
+            quantity: 1,
             item_id: "",
             warehouse_id: "",
         })
@@ -261,6 +262,19 @@ export function CreateItemUnitForm() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-6">
+                        <FormField
+                            control={form.control}
+                            name="current_location"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Current Location</FormLabel>
+                                    <FormControl>
+                                        <Input  {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="item_id"

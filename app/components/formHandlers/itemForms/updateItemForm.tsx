@@ -137,7 +137,7 @@ export function UpdateItemForm({item}: UpdateItemProp) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <h4 className="text-lg">Update Warehouse</h4>
+                <h4 className="text-lg">Update Item</h4>
                 <div className="grid grid-col-1 lg:grid-cols-2 gap-6">
                     <div className="flex flex-col gap-4">
                         <FormField

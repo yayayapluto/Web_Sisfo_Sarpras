@@ -22,6 +22,7 @@ export const itemUnitColumn: ColumnDef<ItemUnit>[] = [
     {
         accessorKey: "notes",
         header: "Notes",
+        cell: ({row}) => row.original.notes ?? "-"
     },
     {
         accessorKey: "acquisition_source",
@@ -33,7 +34,8 @@ export const itemUnitColumn: ColumnDef<ItemUnit>[] = [
     },
     {
         accessorKey: "acquisition_notes",
-        header: "Acquisition Notes"
+        header: "Acquisition Notes",
+        cell: ({row}) => row.original.acquisition_notes ?? "-"
     },
     {
         accessorKey: "status",
@@ -42,6 +44,10 @@ export const itemUnitColumn: ColumnDef<ItemUnit>[] = [
     {
         accessorKey: "quantity",
         header: "Quantity"
+    },
+    {
+        accessorKey: "current_location",
+        header: "Location"
     },
     {
         accessorKey: "qr_image_url",

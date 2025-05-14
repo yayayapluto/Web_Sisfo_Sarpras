@@ -16,6 +16,7 @@ export type ItemUnit = Mandatory & {
     qr_image_url: string
     item_id: number
     warehouse_id: number
+    current_location: string
     item?: Item
     warehouse?: Warehouse
     borrow_details?: BorrowDetail[]

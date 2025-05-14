@@ -33,6 +33,7 @@ import {
 import {useNavigate} from "react-router";
 import {useCookies} from "~/hooks/use-cookies";
 import {toast} from "sonner";
+import type {User} from "~/types/user";
 
 
 const formLoginSchema = z.object({
@@ -55,7 +56,7 @@ export function LoginFormZ() {
 
     const baseUrl = import.meta.env.VITE_BASE_URL
     const url = `${baseUrl}/api/auth/login`
-    const { isLoading, error, result } = useApi<{token: string, role: "admin" | "user"}>({
+    const { isLoading, error, result } = useApi<{token: string, user: User}>({
         url: url,
         method: "POST",
         data: data,
@@ -69,11 +70,11 @@ export function LoginFormZ() {
 
     useEffect(() => {
         if (typeof result !== "undefined") {
-            if (result !== null && result.role === "admin") {
+            if (result !== null && result.user.role === "admin") {
                 setAuthInfo(result.token)
                 navigate("/dashboard", { replace: true, viewTransition: true })
             } else {
-                if (result !== null && result.role !== "admin") toast("Only admin can login", {position: "top-center"})
+                if (result !== null && result.user.role !== "admin") toast("Only admin can login", {position: "top-center"})
             }
         }
     }, [result, navigate])
