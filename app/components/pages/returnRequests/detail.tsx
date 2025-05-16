@@ -83,22 +83,26 @@ export default function ReturnRequestDetail() {
     })
     
     useEffect(() => {
-            if (requestStatus) {
-                setActionUrl(`${url}/${requestStatus}`);
-            }
-        }, [requestStatus]);
+        if (requestStatus) {
+            setActionUrl(`${url}/${requestStatus}`);
+        }
+    }, [requestStatus]);
         
-        useEffect(() => {
-            if (actionUrl) {
-                setFireAction(true);
-            }
-        }, [actionUrl]);
-        
-        useEffect(() => {
-            if (!isActionLoading && actionResult) {
-                setRefetch(true);
-            }
-        }, [isActionLoading, actionResult]);
+    useEffect(() => {
+        if (actionUrl) {
+            setFireAction(true);
+        }
+    }, [actionUrl]);
+
+    useEffect(() => {
+        if (!isActionLoading && actionResult) {
+            setRefetch(true);
+            // Reset the states after successful action
+            setRequestStatus(undefined);
+            setFireAction(false);
+            setActionUrl("");
+        }
+    }, [isActionLoading, actionResult]);
 
 
     return (
@@ -152,7 +156,7 @@ export default function ReturnRequestDetail() {
                                     <Separator orientation="vertical" />
                                     <p className={"text-xs lg:text-sm text-muted-foreground"}>{`Last Update at ${returnRequest?.updated_at}`}</p>
                                 </div>
-                                {returnRequest?.status === "pending" && (
+                                {returnRequest?.status === "pending" && !requestStatus && (
                                     <>
                                         <Separator className="my-4" />
                                         <div className="flex flex-col gap-2">
@@ -164,7 +168,7 @@ export default function ReturnRequestDetail() {
                                                         Approve this return request
                                                     </Button>
                                                     <Button variant={"outline"} disabled={isActionLoading} onClick={() => {
-                                                        setRequestStatus("approve")
+                                                        setRequestStatus("reject")
                                                     }} >
                                                         Reject this return request
                                                     </Button>

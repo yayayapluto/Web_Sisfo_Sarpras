@@ -1,5 +1,5 @@
 import React, {type ChangeEvent, useEffect, useState} from "react";
-import {ArrowDownIcon, ArrowLeft, ArrowRight, ArrowUpIcon, Plus, RefreshCcw} from "lucide-react";
+import {ArrowDownIcon, ArrowLeft, ArrowRight, ArrowUpIcon, File, FileText, Plus, RefreshCcw} from "lucide-react";
 import { cn } from "~/lib/utils";
 import { DataTable } from "~/components/ui/data-table";
 import {
@@ -41,6 +41,15 @@ import {itemUnitColumn} from "~/components/columns/itemUnitColumn";
 import type {ItemUnit} from "~/types/itemUnit";
 import type { BorrowRequest } from "~/types/borrowRequest";
 import { BorrowRequestColumn } from "~/components/columns/borrowRequestColumn";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "~/components/ui/dialog";
+import {Calendar} from "~/components/ui/calendar";
 
 type sortDirType = 'asc' | 'desc'
 type sortByType = 'status' | 'user_id' | 'created_at'
@@ -96,6 +105,29 @@ export default function BorrowRequestIndex() {
         setSearchTerm(event.target.value);
     };
 
+    const [startDate, setStartDate] = useState<Date | undefined>(new Date())
+    const [endDate, setEndDate] = useState<Date | undefined>(new Date())
+    const [doExport, setDoExport] = useState(false)
+
+    const { isLoading: exportLoading, error: exportError, result: exportResult } = useApi<any>({
+        url: `${baseUrl}/api/admin/borrow-requests/export/pdf?start=${startDate?.toDateString()}&end=${endDate?.toDateString()}`,
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        contentType: "application/pdf",
+        trigger: doExport
+    });
+
+    useEffect(() => {
+        if (doExport) setDoExport(false)
+    }, [doExport])
+
+    useEffect(() => {
+        if (!exportLoading && exportResult) {
+            window.location.assign(exportResult)
+        }
+    }, [exportLoading, exportResult])
+
     return (
         <div className="container mx-auto py-4">
             <Breadcrumb>
@@ -142,11 +174,50 @@ export default function BorrowRequestIndex() {
                         </Button>
                     </div>
                 </div>
-                <div className={"flex flex-row gap-2"}>
+                <div className={"flex flex-row gap-2 jusltify-start"}>
                     <Button variant={"outline"} onClick={() => setReload(true)} disabled={isLoading}>
                         Reload
                         <RefreshCcw className={`${isLoading && "animate-spin"}`}/>
                     </Button>
+                    <Dialog>
+                        <DialogTrigger>
+                            <Button variant={"outline"} disabled={isLoading} >
+                                Export
+                                <FileText/>
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className={"w-full"}>
+                            <DialogHeader>
+                                <DialogTitle>Export to PDF</DialogTitle>
+                                <DialogDescription>
+                                    Select borrow request date range first
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                                <div className="space-y-2">
+                                    <p className="text-sm text-center">Start date</p>
+                                    <Calendar
+                                        mode="single"
+                                        selected={startDate}
+                                        onSelect={setStartDate}
+                                        className="rounded-md border-1 w-full flex justify-center items-center"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <p className="text-sm text-center">End date</p>
+                                    <Calendar
+                                        mode="single"
+                                        selected={endDate}
+                                        onSelect={setEndDate}
+                                        className="rounded-md border-1 w-full flex justify-center items-center"
+                                    />
+                                </div>
+                            </div>
+                            <Button className={"cursor-pointer"} onClick={() => setDoExport(true)}>
+                                {exportLoading ? <Spinner isWhite/> : "Export"}
+                            </Button>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
 

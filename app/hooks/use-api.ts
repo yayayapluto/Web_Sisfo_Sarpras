@@ -8,6 +8,7 @@ type UseApiOptions = {
     url: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     data?: any;
+    contentType?: string
     headers?: AuthHeaders;
     trigger?: boolean;
     showToast?: boolean
@@ -19,14 +20,16 @@ type UseApiResult<T> = {
     result: T | null;
 };
 
-const useApi = <T, >({
-                         url,
-                         method = 'GET',
-                         data = null,
-                         headers = {},
-                         trigger,
-                         showToast = true
-                     }: UseApiOptions): { isLoading: boolean; error: object | null; result: T | null | undefined } => {
+const useApi = <T, >(
+    {
+        url,
+        method = 'GET',
+        data = null,
+        contentType = "application/json",
+        headers = {},
+        trigger,
+        showToast = true
+    }: UseApiOptions): { isLoading: boolean; error: object | null; result: T | null | undefined } => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<object | null>(null);
     const [result, setResult] = useState<T | null | undefined>(null);
@@ -38,7 +41,7 @@ const useApi = <T, >({
                 url,
                 method,
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': contentType,
                     ...headers,
                 },
                 data: data ? data : undefined,

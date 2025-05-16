@@ -93,7 +93,7 @@ export function CreateItemUnitForm() {
             condition: "",
             acquisition_source: "",
             acquisition_date: new Date(),
-            quantity: 1,
+            quantity: "1",
             item_id: "",
             warehouse_id: "",
         })

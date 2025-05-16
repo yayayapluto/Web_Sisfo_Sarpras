@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
-  CardDescription,
+  CardDescription, CardFooter,
 } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Badge } from "~/components/ui/badge";
@@ -22,6 +22,12 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, Respon
 import React, { useEffect, useState } from "react";
 import { useCookies } from "~/hooks/use-cookies";
 import { Spinner } from "../ui/spinner";
+import type {BorrowRequest} from "~/types/borrowRequest";
+import type {ReturnRequest} from "~/types/returnRequest";
+import type {PaginationResponse} from "~/types/paginationResponse";
+import {cn} from "~/lib/utils";
+import {Button} from "~/components/ui/button";
+import {useNavigate} from "react-router";
 
 const baseUrl = import.meta.env.VITE_BASE_URL
 
@@ -108,10 +114,8 @@ type LowStockItem = {
 };
 
 type Alerts = {
-  pending_borrow_requests: number;
-  pending_return_requests: number;
-  warehouses_over_capacity: WarehouseOverCapacity[];
-  low_stock_items: LowStockItem[];
+  pending_borrow_requests: PaginationResponse<BorrowRequest>;
+  pending_return_requests: PaginationResponse<ReturnRequest>;
 };
 
 export default function Dashboard() {
@@ -162,16 +166,11 @@ export default function Dashboard() {
 
   const borrowedVsReturned: BorrowedVsReturned = borrowStats.result?.borrowed_vs_returned || { borrowed: 0, returned: 0 };
 
-  const alertContent: Alerts = alerts.result || {
-    pending_borrow_requests: 0,
-    pending_return_requests: 0,
-    warehouses_over_capacity: [],
-    low_stock_items: [],
-  };
-  const pendingBorrow = alertContent.pending_borrow_requests;
-  const pendingReturn = alertContent.pending_return_requests;
-  const warehousesOver = alertContent.warehouses_over_capacity;
-  const lowStock = alertContent.low_stock_items;
+  const alertContent: Alerts = alerts.result!;
+  const pendingBorrow = alertContent?.pending_borrow_requests;
+  const pendingReturn = alertContent?.pending_return_requests;
+
+  const navigate = useNavigate();
 
   return (
     <div className="container mx-auto py-6 space-y-8">
@@ -260,79 +259,76 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Alerts</CardTitle>
-            <CardDescription>Pending requests, over capacity, and low stock</CardDescription>
+            <CardTitle>Pending Borrow requests</CardTitle>
+            <CardDescription>
+              <Badge variant={pendingBorrow?.data.length > 0 ? "destructive" : "default"}>
+                Pending Borrow Requests: {pendingBorrow?.data.length ?? 0}
+              </Badge>
+            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className={cn("w-full")} >
             {alerts.isLoading ? (
-              <Skeleton className="h-40 w-full rounded-xl" />
+                <Skeleton className="h-40 w-full rounded-xl" />
             ) : (
-              <div className="space-y-4">
-                <div className="flex gap-4 flex-wrap">
-                  <Badge variant={pendingBorrow > 0 ? "destructive" : "default"}>
-                    Pending Borrow Requests: {pendingBorrow}
-                  </Badge>
-                  <Badge variant={pendingReturn > 0 ? "destructive" : "default"}>
-                    Pending Return Requests: {pendingReturn}
-                  </Badge>
-                </div>
-                <Separator />
-                <div>
-                  <div className="font-semibold mb-2">Warehouses Over Capacity</div>
-                  {warehousesOver.length === 0 ? (
-                    <div className="text-muted-foreground text-sm">None</div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Location</TableHead>
-                          <TableHead>Capacity</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {warehousesOver.map((w: WarehouseOverCapacity) => (
-                          <TableRow key={w.id}>
-                            <TableCell>{w.name}</TableCell>
-                            <TableCell>{w.location}</TableCell>
-                            <TableCell>{w.capacity}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-2">
+                  {pendingBorrow?.data.length <= 0 && (
+                      <span className={"text-sm text-muted-foreground"} >There is no pending borrow request</span>
                   )}
+                  {pendingBorrow?.data.length > 0 && pendingBorrow?.data.map(request => (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Requested by {request.user?.username}</CardTitle>
+                          <CardDescription>Requested at {`${request.created_at.split("T")[0]} ${request.created_at.split("T")[1].split(".")[0]}`}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <p>Total item requested: {request.borrow_details?.length}</p>
+                        </CardContent>
+                        <CardFooter>
+                          <Button onClick={() => navigate(`/borrow-requests/${request.id}`)} >
+                            See detail
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                  ))}
                 </div>
-                <Separator />
-                <div>
-                  <div className="font-semibold mb-2">Low Stock Items</div>
-                  {lowStock.length === 0 ? (
-                    <div className="text-muted-foreground text-sm">None</div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>SKU</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Quantity</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {lowStock.map((item: LowStockItem) => (
-                          <TableRow key={item.id}>
-                            <TableCell>{item.sku}</TableCell>
-                            <TableCell>{item.item?.name || "-"}</TableCell>
-                            <TableCell>{item.quantity}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-                </div>
-              </div>
             )}
           </CardContent>
         </Card>
-            </div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Return Borrow requests</CardTitle>
+            <CardDescription>
+              <Badge variant={pendingReturn?.data.length > 0 ? "destructive" : "default"}>
+                Pending Return Requests: {pendingReturn?.data.length ?? 0}
+              </Badge>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className={cn("w-full")} >
+            {alerts.isLoading ? (
+                <Skeleton className="h-40 w-full rounded-xl" />
+            ) : (
+                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-2">
+                  {pendingReturn?.data.length <= 0 && (
+                      <span className={"text-sm text-muted-foreground"} >There is no pending return request</span>
+                  )}
+                  {pendingReturn?.data.length > 0 && pendingReturn?.data.map(request => (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Requested by {request.borrow_request?.user?.username}</CardTitle>
+                          <CardDescription>Requested at {`${request.created_at.split("T")[0]} ${request.created_at.split("T")[1].split(".")[0]}`}</CardDescription>
+                        </CardHeader>
+                        <CardFooter>
+                          <Button onClick={() => navigate(`/return-requests/${request.id}`)} >
+                            See detail
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                  ))}
+                </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }
